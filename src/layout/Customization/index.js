@@ -26,6 +26,7 @@ import SubCard from 'ui-component/cards/SubCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { SET_BORDER_RADIUS, SET_FONT_FAMILY } from 'store/actions';
 import { gridSpacing } from 'store/constant';
+import FileUpload from 'ui-component/extended/FileUpload';
 
 // concat 'px'
 function valueText(value) {
@@ -117,7 +118,7 @@ const Customization = () => {
           </AnimateButton>
         </Fab>
       </Tooltip>
-
+      <FileUpload />
       <Drawer
         anchor="right"
         onClose={handleToggle}
