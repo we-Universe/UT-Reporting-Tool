@@ -4,7 +4,9 @@ import logo from 'assets/images/UniverseLogo.svg';
 
 const Logo = () => {
   return (
+    <>
       <img src={logo} alt="Universe" width="140" />
+    </>
   );
 };
 

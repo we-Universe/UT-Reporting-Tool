@@ -26,7 +26,6 @@ import SubCard from 'ui-component/cards/SubCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { SET_BORDER_RADIUS, SET_FONT_FAMILY } from 'store/actions';
 import { gridSpacing } from 'store/constant';
-import FileUpload from 'ui-component/extended/FileUpload';
 
 // concat 'px'
 function valueText(value) {
@@ -117,8 +116,7 @@ const Customization = () => {
             </IconButton>
           </AnimateButton>
         </Fab>
-      </Tooltip>
-      <FileUpload />
+      </Tooltip>      
       <Drawer
         anchor="right"
         onClose={handleToggle}
@@ -129,6 +127,7 @@ const Customization = () => {
           }
         }}
       >
+       
         <PerfectScrollbar component="div">
           <Grid container spacing={gridSpacing} sx={{ p: 3 }}>
             <Grid item xs={12}>
@@ -212,6 +211,7 @@ const Customization = () => {
           </Grid>
         </PerfectScrollbar>
       </Drawer>
+
     </>
   );
 };
