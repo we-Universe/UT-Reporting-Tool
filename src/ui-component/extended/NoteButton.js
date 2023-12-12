@@ -29,8 +29,8 @@ const CustomButton = styled(Button)(({ theme }) => ({
         backgroundColor: theme.palette.grey[900],
     },
     '&:hover::before': {
-        width: '1.6em',
-        height: '1.6em',
+        width: '1em',
+        height: '1em',
     },
     '&:active': {
         boxShadow: `${theme.palette.grey[900]}`,
@@ -50,6 +50,7 @@ const StyledTextarea = styled(TextareaAutosize)({
 const NoteButton = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [textareaValue, setTextareaValue] = useState('');
+  const [savedNote, setSavedNote] = useState(null); 
 
   const handleButtonClick = () => {
     setModalOpen(true);
@@ -64,13 +65,27 @@ const NoteButton = () => {
   };
 
   const handleSave = () => {
-    console.log('Textarea Value:', textareaValue);
+    setSavedNote(textareaValue); 
     handleModalClose();
+  };
+
+  const handleEdit = () => {
+    setModalOpen(true); 
   };
 
   return (
     <>
-      <CustomButton onClick={handleButtonClick}>Add note</CustomButton>
+      {savedNote ? (
+        <>
+          <Typography variant="body1" gutterBottom>
+            {savedNote}
+          </Typography>
+          <CustomButton onClick={handleEdit}>Edit note</CustomButton>
+        </>
+      ) : (
+        <CustomButton onClick={handleButtonClick}>Add note</CustomButton>
+      )}
+
       <Modal
         open={isModalOpen}
         onClose={handleModalClose}
@@ -79,11 +94,11 @@ const NoteButton = () => {
       >
         <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', boxShadow: 24, p: 4 }}>
           <Typography id="modal-title" variant="h6" component="div">
-            Add Note
+            {savedNote ? 'Edit Note' : 'Add Note'}
           </Typography>
           <StyledTextarea rowsMin={3} placeholder="Type your note here..." value={textareaValue} onChange={handleTextareaChange} />
           <Box sx={{ display: "flex", justifyContent: "space-around" }}>
-          <Button variant="contained" onClick={handleModalClose} sx={{ marginTop: '1em', backgroundColor: "#0B3782" }}>
+            <Button variant="contained" onClick={handleModalClose} sx={{ marginTop: '1em', backgroundColor: "#0B3782" }}>
               Close
             </Button>
             <Button variant="contained" onClick={handleSave} sx={{ marginTop: '1em', backgroundColor: "#0B3782" }}>
