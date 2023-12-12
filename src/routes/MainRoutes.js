@@ -96,13 +96,9 @@ import Loadable from 'ui-component/Loadable';
 
 // Importing Lazy-loaded components for the main application
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
-<<<<<<< HEAD
 
 // utilities routing
 const UtilsTypography = Loadable(lazy(() => import('views/utilities/Form')));
-=======
-const UtilsTypography = Loadable(lazy(() => import('views/utilities/Typography')));
->>>>>>> 2e2ae32aeb94796041d4493362f8469fbd5ed0af
 const UtilsColor = Loadable(lazy(() => import('views/utilities/Color')));
 const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
 const UtilsMaterialIcons = Loadable(lazy(() => import('views/utilities/MaterialIcons')));
