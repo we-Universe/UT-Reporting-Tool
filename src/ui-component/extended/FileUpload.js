@@ -12,12 +12,7 @@ const FileUpload = () => {
   
     const handleImageClick = () => {
       fileInputRef.current.click();
-    };
-  
-    const handleKeyDown = (e) => {
-      if (e.key === 'Enter') {
-        fileInputRef.current.click();
-      }
+      console.log('Selected file:');
     };
   
     const handleFileChange = (e) => {
@@ -30,7 +25,6 @@ const FileUpload = () => {
         <button
           type="button"
           onClick={handleImageClick}
-          onKeyDown={handleKeyDown}
           style={{ cursor: 'pointer', width: "100px", height: "100px", border: 'none', padding: 0, background: 'none', marginTop: "1rem" }}
         >
           <img
