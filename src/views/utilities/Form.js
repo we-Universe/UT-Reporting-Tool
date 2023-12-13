@@ -9,12 +9,15 @@ import { selectedTypes, reportTypes } from 'store/typesData';
 import CurrentDatePicker from 'ui-component/extended/CurrentDatePicker';
 import NoteButton from 'ui-component/extended/NoteButton';
 import FileUpload from 'ui-component/extended/FileUpload';
+import UploadFile from 'assets/images/icons/doc.png';
+import ImiFile from 'assets/images/icons/imi.svg';
+import RefundFile from 'assets/images/icons/refundfile.png';
 
 // ==============================|| FORM SECTION ||============================== //
 
 const FormSection = ({ title, children }) => (
   <Grid item xs={12} md={6}>
-    <Typography variant="h5" gutterBottom>
+    <Typography sx={{ fontSize: "15px" }} gutterBottom>
       {title}
     </Typography>
     {children}
@@ -30,10 +33,11 @@ const Form = () => (
       <FormSection title="Telecom Name">
         <DropdownList selectedTypes={selectedTypes} placeholder={'Choose telecom name'} />
       </FormSection>
-
-      <FormSection title="IMI File">
-        <FileUpload />
+      <FormSection title="Report File">
+        {/* <FileUpload image={UploadFile} /> */}
+        <FileUpload image={UploadFile} allowedExtensions={['xlsx']} />
       </FormSection>
+
 
       {/* Report Type */}
       <FormSection title="Report Type">
@@ -41,17 +45,19 @@ const Form = () => (
       </FormSection>
 
       {/* Other Files */}
-      <FormSection title="Report File">
-        <FileUpload />
+      <FormSection title="IMI File">
+        {/* <FileUpload image={ImiFile} /> */}
+        <FileUpload image={ImiFile} allowedExtensions={['pdf']} />
       </FormSection>
 
-            {/* Date */}
-            <FormSection title="Date">
+      {/* Date */}
+      <FormSection title="Date">
         <CurrentDatePicker />
       </FormSection>
 
       <FormSection title="Refund File">
-        <FileUpload />
+        {/* <FileUpload image={RefundFile} /> */}
+        <FileUpload image={RefundFile} allowedExtensions={['pdf']} />
       </FormSection>
 
       {/* Notes */}

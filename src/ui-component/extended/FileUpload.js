@@ -1,12 +1,10 @@
 import React, { useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 
 // material-ui
 import { Box, Typography } from '@mui/material';
 
-// project imports
-import UploadFile from 'assets/images/icons/doc.png';
-
-const FileUpload = () => {
+const FileUpload = ({ image, allowedExtensions }) => {
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -16,7 +14,18 @@ const FileUpload = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setSelectedFile(file);
+
+    if (file) {
+      const fileExtension = file.name.split('.').pop().toLowerCase();
+      setSelectedFile(file);
+
+      if (!allowedExtensions.includes(fileExtension)) {
+        alert(`Invalid file type. Please select a file with ${allowedExtensions.join(', ')} extension.`);
+        fileInputRef.current.value = '';
+        setSelectedFile(null);
+        return;
+      }
+    }
   };
 
   return (
@@ -26,7 +35,7 @@ const FileUpload = () => {
         onClick={handleImageClick}
         style={{ cursor: 'pointer', width: '40px', height: '40px', border: 'none', padding: 0, background: 'none' }}
       >
-        <img src={UploadFile} alt="Upload File" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <img src={image} alt="Upload File" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       </button>
       <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
       {selectedFile && (
@@ -36,6 +45,11 @@ const FileUpload = () => {
       )}
     </Box>
   );
+};
+
+FileUpload.propTypes = {
+  image: PropTypes.string.isRequired,
+  allowedExtensions: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default FileUpload;
