@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 
 // material-ui
-import { Box, Card, Grid, Typography, TextField } from '@mui/material';
+import { Box, Card, Grid, Typography, TextField, Button } from '@mui/material';
 
 // project imports
 import SubCard from 'ui-component/cards/SubCard';
@@ -98,9 +98,28 @@ const UIColor = () => (
                 <CurrentDatePicker />
               </FormSection>
             </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={11}>
+            <Grid item xs={12} sm={6} md={4} lg={6}>
               <FormSection title="Notes*">
                 <NoteButton />
+              </FormSection>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={12}>
+              <FormSection>
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#0B3782",
+                    color: (theme) => theme.palette.secondary.light,
+                    borderRadius: '8px',
+                    height: '40px',
+                    width: '150px',
+                    '&:hover': {
+                      backgroundColor: "#0B3782",
+                    },
+                  }}
+                >
+                  Save Contract
+                </Button>
               </FormSection>
             </Grid>
           </Grid>

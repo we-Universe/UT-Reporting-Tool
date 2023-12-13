@@ -13,7 +13,7 @@ const NoteButton = () => {
   return (
     <>
       <TextareaAutosize
-        style={{ minHeight: '5rem', width: '100%', fontSize: '14px' }}
+        style={{ minHeight: '5rem', width: '20.7rem', fontSize: '14px' }}
         aria-label="minimum height"
         minRows={1}
         placeholder="Type your note here..."
