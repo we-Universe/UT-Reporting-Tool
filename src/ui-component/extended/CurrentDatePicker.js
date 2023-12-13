@@ -10,7 +10,9 @@ const CurrentDatePicker = () => {
       showIcon
       selected={startDate}
       onChange={(date) => setStartDate(date)}
+      dateFormat="dd/MM/yyyy"
     />
+    
   );
 };
 

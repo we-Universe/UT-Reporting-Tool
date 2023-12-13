@@ -1,5 +1,5 @@
 // material-ui
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, Button } from '@mui/material';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -12,9 +12,9 @@ import FileUpload from 'ui-component/extended/FileUpload';
 import UploadFile from 'assets/images/icons/doc.png';
 import ImiFile from 'assets/images/icons/imi.svg';
 import RefundFile from 'assets/images/icons/refundfile.png';
+import SubCard from 'ui-component/cards/SubCard';
 
 // ==============================|| FORM SECTION ||============================== //
-
 const FormSection = ({ title, children }) => (
   <Grid item xs={12} md={6}>
     <Typography sx={{ fontSize: "15px" }} gutterBottom>
@@ -29,41 +29,67 @@ const FormSection = ({ title, children }) => (
 const Form = () => (
   <MainCard title="Upload Reports">
     <Grid container spacing={gridSpacing}>
-      {/* Telecom Name */}
-      <FormSection title="Telecom Name">
-        <DropdownList selectedTypes={selectedTypes} placeholder={'Choose telecom name'} />
-      </FormSection>
-      <FormSection title="Report File">
-        {/* <FileUpload image={UploadFile} /> */}
-        <FileUpload image={UploadFile} allowedExtensions={['xlsx']} />
-      </FormSection>
+      <Grid item xs={12}>
+        <SubCard>
+        <Grid container spacing={gridSpacing}>
+
+          {/* Telecom Name */}
+          <FormSection title="Telecom Name">
+            <DropdownList selectedTypes={selectedTypes} placeholder={'Choose telecom name'} />
+          </FormSection>
+          <FormSection title="Report File">
+            {/* <FileUpload image={UploadFile} /> */}
+            <FileUpload image={UploadFile} allowedExtensions={['xlsx']} />
+          </FormSection>
 
 
-      {/* Report Type */}
-      <FormSection title="Report Type">
-        <DropdownList selectedTypes={reportTypes} placeholder={'Choose report type'} />
-      </FormSection>
+          {/* Report Type */}
+          <FormSection title="Report Type">
+            <DropdownList selectedTypes={reportTypes} placeholder={'Choose report type'} />
+          </FormSection>
 
-      {/* Other Files */}
-      <FormSection title="IMI File">
-        {/* <FileUpload image={ImiFile} /> */}
-        <FileUpload image={ImiFile} allowedExtensions={['pdf']} />
-      </FormSection>
+          {/* Other Files */}
+          <FormSection title="IMI File">
+            {/* <FileUpload image={ImiFile} /> */}
+            <FileUpload image={ImiFile} allowedExtensions={['pdf']} />
+          </FormSection>
 
-      {/* Date */}
-      <FormSection title="Date">
-        <CurrentDatePicker />
-      </FormSection>
+          {/* Date */}
+          <FormSection title="Date">
+            <CurrentDatePicker />
+          </FormSection>
 
-      <FormSection title="Refund File">
-        {/* <FileUpload image={RefundFile} /> */}
-        <FileUpload image={RefundFile} allowedExtensions={['pdf']} />
-      </FormSection>
+          <FormSection title="Refund File">
+            {/* <FileUpload image={RefundFile} /> */}
+            <FileUpload image={RefundFile} allowedExtensions={['pdf']} />
+          </FormSection>
 
-      {/* Notes */}
-      <FormSection title="Notes*">
-        <NoteButton />
-      </FormSection>
+          {/* Notes */}
+          <FormSection title="Notes*">
+            <NoteButton />
+          </FormSection>
+
+          <FormSection>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#0B3782",
+                color: (theme) => theme.palette.secondary.light,
+                borderRadius: '8px',
+                height: '40px',
+                width: '150px',
+                margin: "2.5rem 8rem 2rem",
+                '&:hover': {
+                  backgroundColor: "#0B3782",
+                },
+              }}
+            >
+              Save
+            </Button>
+          </FormSection>
+          </Grid>
+          </SubCard>
+      </Grid>
     </Grid>
   </MainCard>
 );

@@ -99,7 +99,7 @@ const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')))
 
 // utilities routing
 const UtilsTypography = Loadable(lazy(() => import('views/utilities/Form')));
-const UtilsColor = Loadable(lazy(() => import('views/utilities/Color')));
+const UtilsColor = Loadable(lazy(() => import('views/utilities/Contract')));
 const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
 const UtilsMaterialIcons = Loadable(lazy(() => import('views/utilities/MaterialIcons')));
 const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons')));
