@@ -26,7 +26,7 @@ const utilities = {
     },
     {
       id: 'util-UploadContract ',
-      title: 'Upload Contract',
+      title: 'Upload Contracts',
       type: 'item',
       url: '/utils/util-UploadContract',
       icon: icons.IconBookUpload,
