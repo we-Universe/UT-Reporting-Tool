@@ -122,7 +122,7 @@ const FirebaseLogin = ({ ...others }) => {
               localStorage.setItem('accessToken', response.data.accessToken);
               localStorage.setItem('userRole', response.data.userRole);
               setTimeout(() => {
-                window.location.href = '/main'
+                window.location.href = '/dashboard/default'
               }, 2000);
 
             }
