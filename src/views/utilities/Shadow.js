@@ -1,125 +1,105 @@
-import PropTypes from 'prop-types';
+import React from 'react';
 
 // material-ui
-import { Box, Card, Grid } from '@mui/material';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TextField,
+  Autocomplete,
+  Box,
+  Typography
+} from '@mui/material';
+import styled from '@emotion/styled';
 
 // project imports
-import SubCard from 'ui-component/cards/SubCard';
 import MainCard from 'ui-component/cards/MainCard';
 import SecondaryAction from 'ui-component/cards/CardSecondaryAction';
-import { gridSpacing } from 'store/constant';
 
-// ===============================|| SHADOW BOX ||=============================== //
-
-const ShadowBox = ({ shadow }) => (
-  <Card sx={{ mb: 3, boxShadow: shadow }}>
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        py: 4.5,
-        bgcolor: 'primary.light',
-        color: 'grey.800'
-      }}
-    >
-      <Box sx={{ color: 'inherit' }}>boxShadow: {shadow}</Box>
-    </Box>
-  </Card>
-);
-
-ShadowBox.propTypes = {
-  shadow: PropTypes.string.isRequired
-};
+//import dayjs from 'dayjs';
+import 'react-datepicker/dist/react-datepicker.css';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 
 // ============================|| UTILITIES SHADOW ||============================ //
 
-const UtilitiesShadow = () => (
-  <MainCard title="Basic Shadow" secondary={<SecondaryAction link="https://next.material-ui.com/system/shadows/" />}>
-    <Grid container spacing={gridSpacing}>
-      <Grid item xs={12}>
-        <SubCard title="Basic Shadow">
-          <Grid container spacing={gridSpacing}>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="0" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="1" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="2" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="3" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="4" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="5" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="6" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="7" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="8" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="9" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="10" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="11" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="12" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="13" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="14" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="15" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="16" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="17" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="18" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="19" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="20" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="21" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="22" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="23" />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <ShadowBox shadow="24" />
-            </Grid>
-          </Grid>
-        </SubCard>
-      </Grid>
-    </Grid>
-  </MainCard>
-);
+function createData(name, calories, fat, carbs, protein) {
+  return { name, calories, fat, carbs, protein };
+}
+
+const rows = [
+  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+  createData('Eclair', 262, 16.0, 24, 6.0),
+  createData('Cupcake', 305, 3.7, 67, 4.3),
+  createData('Gingerbread', 356, 16.0, 49, 3.9)
+];
+
+const StyledTableContainer = styled(TableContainer)({
+  border: '1px solid #ccc',
+  fontWeight: 'bold',
+  fontSize: '24px'
+});
+
+const top100Films = [
+  { label: 'The Shawshank Redemption', year: 1994 },
+  { label: 'The Godfather', year: 1972 },
+  { label: 'The Godfather: Part II', year: 1974 },
+  { label: 'The Dark Knight', year: 2008 },
+  { label: '12 Angry Men', year: 1957 },
+  { label: "Schindler's List", year: 1993 },
+  { label: 'Pulp Fiction', year: 1994 }
+];
+
+const UtilitiesShadow = () => {
+  //const [value] = React.useState(new Date('2022-04-17'));
+
+  return (
+    <MainCard title="Custom Dropdown with Text Field" secondary={<SecondaryAction link="https://next.material-ui.com/system/shadows/" />}>
+      <Autocomplete
+        disablePortal
+        id="combo-box-demo"
+        options={top100Films}
+        sx={{ width: '30%', marginBottom: '20px' }}
+        renderInput={(params) => <TextField {...params} label="Merchant Name" />}
+      />
+
+      <Box sx={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
+        <Typography sx={{ padding: '15px 0px' }}>Billing Period:</Typography>
+        <TextField variant="outlined" placeholder="Enter Billing Period" />
+      </Box>
+
+      <StyledTableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Service Name</TableCell>
+              <TableCell align="right">Lunched Date</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((row, index) => (
+              <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                <TableCell component="th" scope="row">
+                  {row.name}
+                </TableCell>
+                <TableCell align="right">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DesktopDatePicker label="Lunched Date" inputFormat="MM/DD/YYYY" renderInput={(params) => <TextField {...params} />} />
+                  </LocalizationProvider>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </StyledTableContainer>
+    </MainCard>
+  );
+};
 
 export default UtilitiesShadow;

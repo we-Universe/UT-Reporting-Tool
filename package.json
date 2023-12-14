@@ -9,10 +9,13 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.8.4",
     "@mui/lab": "^5.0.0-alpha.88",
-    "@mui/material": "^5.14.20",
+    "@mui/material": "^5.15.0",
     "@mui/utils": "^5.8.6",
+    "@mui/x-date-pickers": "^6.18.4",
     "@tabler/icons": "^1.72.0",
     "apexcharts": "^3.35.3",
+    "date-fns": "^2.30.0",
+    "dayjs": "^1.11.10",
     "formik": "^2.2.9",
     "framer-motion": "^6.3.16",
     "material-ui-popup-state": "^4.0.1",
@@ -29,6 +32,7 @@
     "react-scripts": "^5.0.1",
     "redux": "^4.2.0",
     "socket.io-client": "^4.7.2",
+    "styled": "^1.0.0",
     "yup": "^0.32.11"
   },
   "scripts": {
