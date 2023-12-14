@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
-import config from '../../../../config';
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+//import axios from 'axios';
+//import config from '../../../../config';
+//import { toast, ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -19,11 +20,11 @@ import {
   InputLabel,
   OutlinedInput,
   Stack,
-  Typography,
+  Typography
 } from '@mui/material';
 
 // third party
-import * as Yup from 'yup';
+//import * as Yup from 'yup';
 import { Formik } from 'formik';
 
 // project imports
@@ -34,11 +35,10 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
-const apiUrl = config.reportingAPIUrls.url;
+//const apiUrl = config.reportingAPIUrls.url;
 const FirebaseLogin = ({ ...others }) => {
   const theme = useTheme();
   const customization = useSelector((state) => state.customization);
-
 
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => {
@@ -52,8 +52,7 @@ const FirebaseLogin = ({ ...others }) => {
   return (
     <>
       <Grid container direction="column" justifyContent="center" spacing={2}>
-        <Grid item xs={12}>
-        </Grid>
+        <Grid item xs={12}></Grid>
         <Grid item xs={12}>
           <Box
             sx={{
@@ -77,9 +76,7 @@ const FirebaseLogin = ({ ...others }) => {
               }}
               disableRipple
               disabled
-            >
-
-            </Button>
+            ></Button>
 
             <Divider sx={{ flexGrow: 1 }} orientation="horizontal" />
           </Box>
@@ -96,63 +93,58 @@ const FirebaseLogin = ({ ...others }) => {
           username: '',
           password: ''
         }}
-        validationSchema={Yup.object().shape({
-          username: Yup.string().max(255).required('Username is required'),
-          password: Yup.string().max(255).required('Password is required')
-        })}
-        onSubmit={async (values) => {
-          try {
-            const response = await axios.post(
-              `${apiUrl}/api/Authentication/Login`,
-              values
-            );
-      
-            if (response.status === 200) {
-              console.log(response);
-              toast.success("Login successfully", {
-                position: "bottom-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-              });
-              localStorage.setItem('accessToken', response.data.accessToken);
-              localStorage.setItem('userRole', response.data.userRole);
-              setTimeout(() => {
-                window.location.href = '/dashboard/default'
-              }, 2000);
+        // validationSchema={Yup.object().shape({
+        //   username: Yup.string().max(255).required('Username is required'),
+        //   password: Yup.string().max(255).required('Password is required')
+        // })}
+        onSubmit={() => {
+          window.location.href = 'main/dashboard/default';
+          //   try {
+          //     const response = await axios.post(`${apiUrl}/api/Authentication/Login`, values);
 
-            }
-          } catch (error) {
-            if (error?.response?.data) {
-              toast.error(error.response.data, {
-                position: "bottom-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-              });
-            } else {
-              toast.error("Internal Server Error!", {
-                position: "bottom-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-              });
-            }
-          }
-
-
+          //     if (response.status === 200) {
+          //       console.log(response);
+          //       toast.success('Login successfully', {
+          //         position: 'bottom-right',
+          //         autoClose: 2000,
+          //         hideProgressBar: false,
+          //         closeOnClick: true,
+          //         pauseOnHover: true,
+          //         draggable: true,
+          //         progress: undefined,
+          //         theme: 'colored'
+          //       });
+          //       localStorage.setItem('accessToken', response.data.accessToken);
+          //       localStorage.setItem('userRole', response.data.userRole);
+          //       setTimeout(() => {
+          //         window.location.href = '/dashboard/default';
+          //       }, 2000);
+          //     }
+          //   } catch (error) {
+          //     if (error?.response?.data) {
+          //       toast.error(error.response.data, {
+          //         position: 'bottom-right',
+          //         autoClose: 5000,
+          //         hideProgressBar: false,
+          //         closeOnClick: true,
+          //         pauseOnHover: true,
+          //         draggable: true,
+          //         progress: undefined,
+          //         theme: 'colored'
+          //       });
+          //     } else {
+          //       toast.error('Internal Server Error!', {
+          //         position: 'bottom-right',
+          //         autoClose: 5000,
+          //         hideProgressBar: false,
+          //         closeOnClick: true,
+          //         pauseOnHover: true,
+          //         draggable: true,
+          //         progress: undefined,
+          //         theme: 'colored'
+          //       });
+          //     }
+          //   }
         }}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
