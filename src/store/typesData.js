@@ -1,8 +1,6 @@
 export const selectedTypes = [
-    'Telecom',
-    'Software Solutions',
-    'Technologies',
-    'E-Marketing',
+    'Jawwal',
+    'Ooredoo'
 ];
 
 export const reportTypes = [
