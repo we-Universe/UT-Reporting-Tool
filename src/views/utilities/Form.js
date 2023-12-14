@@ -51,7 +51,7 @@ const Form = () => (
             {/* Other Files */}
             <FormSection title="IMI File">
               {/* <FileUpload image={ImiFile} /> */}
-              <FileUpload image={ImiFile} allowedExtensions={['pdf']} />
+              <FileUpload image={ImiFile} allowedExtensions={['xlsx']} />
             </FormSection>
 
             {/* Date */}
@@ -61,7 +61,7 @@ const Form = () => (
 
             <FormSection title="Refund File">
               {/* <FileUpload image={RefundFile} /> */}
-              <FileUpload image={RefundFile} allowedExtensions={['pdf']} />
+              <FileUpload image={RefundFile} allowedExtensions={['xlsx']} />
             </FormSection>
 
             {/* Notes */}
