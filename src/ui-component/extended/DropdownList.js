@@ -29,7 +29,7 @@ const DropdownList = ({ selectedTypes, placeholder }) => {
         input={<Input />}
         renderValue={(selected) => {
           if (selected.length === 0) {
-            return <em>{placeholder}</em>;
+            return <em style={{ opacity: 0.5 }}>{placeholder}</em>;
           }
           return selected.join(', ');
         }}

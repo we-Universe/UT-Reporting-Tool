@@ -79,7 +79,7 @@ const UtilitiesShadow = () => {
           <TableHead>
             <TableRow>
               <TableCell>Service Name</TableCell>
-              <TableCell align="right">Lunched Date</TableCell>
+              <TableCell align="right"> Launched Date</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -90,7 +90,11 @@ const UtilitiesShadow = () => {
                 </TableCell>
                 <TableCell align="right">
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DesktopDatePicker label="Lunched Date" inputFormat="MM/DD/YYYY" renderInput={(params) => <TextField {...params} />} />
+                    <DesktopDatePicker
+                      label=" Launched Date"
+                      inputFormat="MM/DD/YYYY"
+                      renderInput={(params) => <TextField {...params} />}
+                    />
                   </LocalizationProvider>
                 </TableCell>
               </TableRow>

@@ -4,7 +4,11 @@ const config = {
   basename: '/main',
   defaultPath: '/dashboard/default',
   fontFamily: `'Roboto', sans-serif`,
-  borderRadius: 12
+  borderRadius: 12,
+  reportingAPIUrls: {
+    url: 'https://localhost:7071',  //Development
+    // url: '' //Server
+  }
 };
 
 export default config;
