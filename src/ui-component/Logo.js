@@ -1,4 +1,3 @@
-// material-ui
 import logo from 'assets/images/UniverseLogo.svg';
 // ==============================|| LOGO SVG ||============================== //
 

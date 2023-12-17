@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Grid } from '@mui/material';
 
 // project imports
-import PopularCard from './PopularCard';
+import PopularCard from './PopularCard/PopularCard';
 import { gridSpacing } from 'store/constant';
 
 // ==============================|| DEFAULT DASHBOARD ||============================== //

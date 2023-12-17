@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-
-// material-ui
 import { FormControl, Select, MenuItem } from '@mui/material';
 
-const DropdownList = ({ selectedTypes, placeholder }) => {
-  const [personName, setPersonName] = useState([]);
+const DropdownList = ({ selectedTypes, placeholder, onChange }) => {
+  const [dropdownSelectedValue, setDropdownSelectedValue] = useState('');
 
   const handleChange = (event) => {
-    setPersonName(event.target.value);
+    const selectedValue = event.target.value;
+    setDropdownSelectedValue(selectedValue);
+    if (onChange) {
+      onChange(selectedValue);
+    }
   };
 
   const MenuProps = {
@@ -22,7 +24,7 @@ const DropdownList = ({ selectedTypes, placeholder }) => {
   return (
     <FormControl>
       <Select
-        value={personName}
+        value={dropdownSelectedValue}
         onChange={handleChange}
         MenuProps={MenuProps}
         inputProps={{ 'aria-label': 'Without label' }}
