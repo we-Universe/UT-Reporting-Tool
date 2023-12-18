@@ -5,10 +5,11 @@ import { useTable } from 'react-table';
 import styles from "./PopularCard.module.css";
 
 // material-ui
-import { Grid, Checkbox, TextField, IconButton, Alert, AlertTitle, Link, Typography, Box, Select, MenuItem } from '@mui/material';
+import { Grid, Checkbox, TextField, IconButton, Alert, AlertTitle, Link, Typography, Box, Select, MenuItem, Button, CardActions } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
+import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 
 import SubCard from '../../../../ui-component/cards/SubCard';
 import MainCard from '../../../../ui-component/cards/MainCard';
@@ -35,7 +36,7 @@ const ReportFileCell = ({ value, isEditable }) => {
   return (
     <Box sx={{ display: 'flex', gap: '-10px' }}>
       <Link href={`${value}`} target="_blank" rel="noopener noreferrer">
-        <img src={logo} alt="Universe" width="30" />
+        <img src={logo} alt="Universe" width="25" />
       </Link>
       <Link href={`${value}`} target="_blank" rel="noopener noreferrer">
         <Typography variant="h3"
@@ -60,10 +61,27 @@ const PopularCard = () => {
   const [alertMessage, setAlertMessage] = useState('');
   const [selectedReportType, setSelectedReportType] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [viewAll, setViewAll] = useState(false);
 
   const data = useMemo(() => [
-    { id: 1, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
-    { id: 2, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 2', approved: 1, Month: 12, Year: 2023 }
+    { id: 1, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1Default Notes 1Default Notes 1', approved: 1, Month: 12, Year: 2023 },
+    { id: 2, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 2', approved: 1, Month: 12, Year: 2023 },
+    { id: 3, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
+    { id: 4, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
+    { id: 5, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
+    { id: 6, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
+    { id: 7, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
+    { id: 8, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
+    { id: 9, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
+    { id: 10, type: 'RBT', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
+    { id: 11, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
+    { id: 12, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
+    { id: 13, type: 'PULL', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
+    { id: 14, type: 'RBT', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
+    { id: 15, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
+    { id: 16, type: 'PULL', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
+    { id: 17, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
+    { id: 18, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
   ], []);
 
   const filteredData = useMemo(() => {
@@ -82,8 +100,9 @@ const PopularCard = () => {
     if (selectedMonth) {
       filtered = filtered.filter((item) => item.Month === selectedMonth);
     }
-    return filtered;
-  }, [data, selectedReportType, selectedDate]);
+
+    return viewAll ? filtered : filtered.slice(0, 15);
+  }, [data, selectedReportType, selectedDate, viewAll]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -147,7 +166,10 @@ const PopularCard = () => {
           sx={{ color: "#0B3782", "& fieldset": { border: 'none' } }}
           multiline
           InputProps={{
-            readOnly: !editableRows.has(row.id)
+            readOnly: !editableRows.has(row.id),
+            inputProps: {
+              style: { textAlign: 'center' }
+            }
           }}
         />
       ),
@@ -261,6 +283,12 @@ const PopularCard = () => {
                   </table>
                 </Grid>
               </Grid>
+              <CardActions sx={{ p: 1.25, pt: 2, justifyContent: 'center' }}>
+                <Button size="small" disableElevation onClick={() => setViewAll(!viewAll)}>
+                  {viewAll ? 'Show Less' : 'View All'}
+                  <ChevronRightOutlinedIcon />
+                </Button>
+              </CardActions>
             </SubCard>
           </Grid>
         </Grid>
