@@ -5,7 +5,7 @@ import { useTable } from 'react-table';
 import styles from "./PopularCard.module.css";
 
 // material-ui
-import { Grid, Checkbox, TextField, IconButton, Alert, AlertTitle, Link, Typography, Box } from '@mui/material';
+import { Grid, Checkbox, TextField, IconButton, Alert, AlertTitle, Link, Typography, Box, Select, MenuItem } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
@@ -33,7 +33,7 @@ const ReportFileCell = ({ value, isEditable }) => {
   }
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
+    <Box sx={{ display: 'flex', gap: '-10px' }}>
       <Link href={`${value}`} target="_blank" rel="noopener noreferrer">
         <img src={logo} alt="Universe" width="30" />
       </Link>
@@ -62,7 +62,8 @@ const PopularCard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const data = useMemo(() => [
-    { id: 1, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: true, Month: 11, Year: 2023 }
+    { id: 1, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023 },
+    { id: 2, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 2', approved: 1, Month: 12, Year: 2023 }
   ], []);
 
   const filteredData = useMemo(() => {
@@ -98,7 +99,7 @@ const PopularCard = () => {
       setShowAlert(true);
       setTimeout(() => {
         setShowAlert(false);
-      }, 2000);
+      }, 1500);
     }
   };
 
@@ -111,17 +112,20 @@ const PopularCard = () => {
       Header: 'Report Type',
       accessor: 'type',
       Cell: ({ row }) => (
-        <TextField
-          defaultValue={editedValues[row.id]?.type ?? row.original.type}
+        <Select
+          value={editedValues[row.id]?.type ?? row.original.type}
           onChange={(e) => {
             setEditedValues((prev) => ({ ...prev, [row.id]: { ...prev[row.id], type: e.target.value } }));
           }}
           sx={{ color: "#0B3782", "& fieldset": { border: 'none' } }}
-          multiline
-          InputProps={{
-            readOnly: !editableRows.has(row.id),
-          }}
-        />
+          disabled={!editableRows.has(row.id)}
+        >
+          {reportTypes.map((type) => (
+            <MenuItem key={type} value={type}>
+              {type}
+            </MenuItem>
+          ))}
+        </Select>
       ),
     },
     {
@@ -136,14 +140,14 @@ const PopularCard = () => {
       accessor: 'notes',
       Cell: ({ row }) => (
         <TextField
-          value={editedValues[row.id]?.notes ?? row.original.notes}
-          onChange={(e) => {
+          defaultValue={editedValues[row.id]?.notes ?? row.original.notes}
+          onBlur={(e) => {
             setEditedValues((prev) => ({ ...prev, [row.id]: { ...prev[row.id], notes: e.target.value } }));
           }}
           sx={{ color: "#0B3782", "& fieldset": { border: 'none' } }}
           multiline
           InputProps={{
-            readOnly: !editableRows.has(row.id),
+            readOnly: !editableRows.has(row.id)
           }}
         />
       ),
@@ -199,15 +203,14 @@ const PopularCard = () => {
       )}
       <MainCard title={<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span>Reports History</span>
-          <DatePicker
-            className={styles.datePickerWrapper}
-            dateFormat="MM yyyy"
-            showMonthYearPicker
-            selected={selectedDate}
-            onChange={handleDateChange}
-            showIcon
-            todayButton="Choose a date"
-          />
+        <DatePicker
+          className={styles.datePickerWrapper}
+          dateFormat="MM yyyy"
+          showMonthYearPicker
+          onChange={handleDateChange}
+          placeholderText="Choose a date"
+          showIcon
+        />
         <DropdownList
           selectedTypes={reportTypes}
           placeholder={'Choose report type'}
