@@ -247,7 +247,7 @@ const PopularCard = () => {
                 readOnly: !editableRows.has(row.id),
                 inputProps: {
                   style: { textAlign: 'center' },
-                },
+                }
               }}
             />
           ))}
@@ -257,7 +257,7 @@ const PopularCard = () => {
             </IconButton>
           )}
         </Box>
-      ),
+      )
     },
     {
       Header: 'Status',
