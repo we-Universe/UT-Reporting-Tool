@@ -1,305 +1,380 @@
-import PropTypes from 'prop-types';
-import { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+
+import { useTable } from 'react-table';
 
 // material-ui
-import { useTheme } from '@mui/material/styles';
-import { Avatar, Button, CardActions, CardContent, Divider, Grid, Menu, MenuItem, Typography } from '@mui/material';
+import { Grid, Checkbox, TextField, IconButton, Alert, Box, Button, CardActions } from '@mui/material';
+import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
+import AddSharpIcon from '@mui/icons-material/AddSharp';
 
 // project imports
-import MainCard from 'ui-component/cards/MainCard';
-import SkeletonPopularCard from 'ui-component/cards/Skeleton/PopularCard';
-import { gridSpacing } from 'store/constant';
+import SubCard from '../../ui-component/cards/SubCard';
+import MainCard from '../../ui-component/cards/MainCard';
+import DropdownList from '../../ui-component/extended/DropdownList';
+import { reportTypes } from '../../store/typesData';
+import EditButton from '../../ui-component/EditButton/EditButton';
+import SaveButton from '../../ui-component/SaveButton/SaveButton';
 
-// assets
-import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
-import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
-import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutlined';
-import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
-
-// ==============================|| DASHBOARD DEFAULT - POPULAR CARD ||============================== //
-
-const Operator = ({ isLoading }) => {
-  const theme = useTheme();
-
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  return (
-    <>
-      {isLoading ? (
-        <SkeletonPopularCard />
-      ) : (
-        <MainCard content={false}>
-          <CardContent>
-            <Grid container spacing={gridSpacing}>
-              <Grid item xs={12}>
-                <Grid container alignContent="center" justifyContent="space-between">
-                  <Grid item>
-                    <Typography variant="h4">All Reports</Typography>
-                  </Grid>
-                  <Grid item>
-                    <MoreHorizOutlinedIcon
-                      fontSize="small"
-                      sx={{
-                        color: theme.palette.primary[200],
-                        cursor: 'pointer'
-                      }}
-                      aria-controls="menu-popular-card"
-                      aria-haspopup="true"
-                      onClick={handleClick}
-                    />
-                    <Menu
-                      id="menu-popular-card"
-                      anchorEl={anchorEl}
-                      keepMounted
-                      open={Boolean(anchorEl)}
-                      onClose={handleClose}
-                      variant="selectedMenu"
-                      anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'right'
-                      }}
-                      transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right'
-                      }}
-                    >
-                      <MenuItem onClick={handleClose}>Today</MenuItem>
-                      <MenuItem onClick={handleClose}>This Month</MenuItem>
-                      <MenuItem onClick={handleClose}>This Year </MenuItem>
-                    </Menu>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={12}>
-                <Grid container direction="column">
-                  <Grid item>
-                    <Grid container alignItems="center" justifyContent="space-between">
-                      <Grid item>
-                        <Typography variant="subtitle1" color="inherit">
-                          Bajaj Finery
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Grid container alignItems="center" justifyContent="space-between">
-                          <Grid item>
-                            <Typography variant="subtitle1" color="inherit">
-                              $1839.00
-                            </Typography>
-                          </Grid>
-                          <Grid item>
-                            <Avatar
-                              variant="rounded"
-                              sx={{
-                                width: 16,
-                                height: 16,
-                                borderRadius: '5px',
-                                backgroundColor: theme.palette.success.light,
-                                color: theme.palette.success.dark,
-                                ml: 2
-                              }}
-                            >
-                              <KeyboardArrowUpOutlinedIcon fontSize="small" color="inherit" />
-                            </Avatar>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="subtitle2" sx={{ color: 'success.dark' }}>
-                      10% Profit
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Divider sx={{ my: 1.5 }} />
-                <Grid container direction="column">
-                  <Grid item>
-                    <Grid container alignItems="center" justifyContent="space-between">
-                      <Grid item>
-                        <Typography variant="subtitle1" color="inherit">
-                          TTML
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Grid container alignItems="center" justifyContent="space-between">
-                          <Grid item>
-                            <Typography variant="subtitle1" color="inherit">
-                              $100.00
-                            </Typography>
-                          </Grid>
-                          <Grid item>
-                            <Avatar
-                              variant="rounded"
-                              sx={{
-                                width: 16,
-                                height: 16,
-                                borderRadius: '5px',
-                                backgroundColor: theme.palette.orange.light,
-                                color: theme.palette.orange.dark,
-                                marginLeft: 1.875
-                              }}
-                            >
-                              <KeyboardArrowDownOutlinedIcon fontSize="small" color="inherit" />
-                            </Avatar>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="subtitle2" sx={{ color: theme.palette.orange.dark }}>
-                      10% loss
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Divider sx={{ my: 1.5 }} />
-                <Grid container direction="column">
-                  <Grid item>
-                    <Grid container alignItems="center" justifyContent="space-between">
-                      <Grid item>
-                        <Typography variant="subtitle1" color="inherit">
-                          Reliance
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Grid container alignItems="center" justifyContent="space-between">
-                          <Grid item>
-                            <Typography variant="subtitle1" color="inherit">
-                              $200.00
-                            </Typography>
-                          </Grid>
-                          <Grid item>
-                            <Avatar
-                              variant="rounded"
-                              sx={{
-                                width: 16,
-                                height: 16,
-                                borderRadius: '5px',
-                                backgroundColor: theme.palette.success.light,
-                                color: theme.palette.success.dark,
-                                ml: 2
-                              }}
-                            >
-                              <KeyboardArrowUpOutlinedIcon fontSize="small" color="inherit" />
-                            </Avatar>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="subtitle2" sx={{ color: theme.palette.success.dark }}>
-                      10% Profit
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Divider sx={{ my: 1.5 }} />
-                <Grid container direction="column">
-                  <Grid item>
-                    <Grid container alignItems="center" justifyContent="space-between">
-                      <Grid item>
-                        <Typography variant="subtitle1" color="inherit">
-                          TTML
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Grid container alignItems="center" justifyContent="space-between">
-                          <Grid item>
-                            <Typography variant="subtitle1" color="inherit">
-                              $189.00
-                            </Typography>
-                          </Grid>
-                          <Grid item>
-                            <Avatar
-                              variant="rounded"
-                              sx={{
-                                width: 16,
-                                height: 16,
-                                borderRadius: '5px',
-                                backgroundColor: theme.palette.orange.light,
-                                color: theme.palette.orange.dark,
-                                ml: 2
-                              }}
-                            >
-                              <KeyboardArrowDownOutlinedIcon fontSize="small" color="inherit" />
-                            </Avatar>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="subtitle2" sx={{ color: theme.palette.orange.dark }}>
-                      10% loss
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Divider sx={{ my: 1.5 }} />
-                <Grid container direction="column">
-                  <Grid item>
-                    <Grid container alignItems="center" justifyContent="space-between">
-                      <Grid item>
-                        <Typography variant="subtitle1" color="inherit">
-                          Stolon
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Grid container alignItems="center" justifyContent="space-between">
-                          <Grid item>
-                            <Typography variant="subtitle1" color="inherit">
-                              $189.00
-                            </Typography>
-                          </Grid>
-                          <Grid item>
-                            <Avatar
-                              variant="rounded"
-                              sx={{
-                                width: 16,
-                                height: 16,
-                                borderRadius: '5px',
-                                backgroundColor: theme.palette.orange.light,
-                                color: theme.palette.orange.dark,
-                                ml: 2
-                              }}
-                            >
-                              <KeyboardArrowDownOutlinedIcon fontSize="small" color="inherit" />
-                            </Avatar>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="subtitle2" sx={{ color: theme.palette.orange.dark }}>
-                      10% loss
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-          </CardContent>
-          <CardActions sx={{ p: 1.25, pt: 0, justifyContent: 'center' }}>
-            <Button size="small" disableElevation>
-              View All
-              <ChevronRightOutlinedIcon />
-            </Button>
-          </CardActions>
-        </MainCard>
-      )}
-    </>
-  );
+const monthAbbreviations = {
+  Jan: 1,
+  Feb: 2,
+  Mar: 3,
+  Apr: 4,
+  May: 5,
+  Jun: 6,
+  Jul: 7,
+  Aug: 8,
+  Sep: 9,
+  Oct: 10,
+  Nov: 11,
+  Dec: 12,
 };
 
-Operator.propTypes = {
-  isLoading: PropTypes.bool
+const Operator = () => {
+  const [editableRows, setEditableRows] = useState(new Set());
+  const [editedValues, setEditedValues] = useState({});
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [selectedReportType, setSelectedReportType] = useState('');
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [toSelectedDate, setToSelectedDate] = useState(new Date());
+  const [viewAll, setViewAll] = useState(false);
+  const [additionalNotes, setAdditionalNotes] = useState(new Map());
+
+  const handleAddNote = (rowId) => {
+    setAdditionalNotes((prevNotes) => {
+      const newNotes = new Map(prevNotes);
+      newNotes.set(rowId, [...(newNotes.get(rowId) || []), '']);
+      return newNotes;
+    });
+  };
+
+  const data = useMemo(() => [
+    { id: 1, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1Default Notes 1Default Notes 1', approved: 1, Month: 11, Year: 2023, merchantName: "hello", status: "eeee" },
+    { id: 2, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 2', approved: 1, Month: 12, Year: 2023, merchantName: "hello", status: "eeee" },
+    { id: 3, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hello", status: "eeee" },
+    { id: 4, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 2, Year: 2023, merchantName: "hi", status: "eeee" },
+    { id: 5, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
+    { id: 6, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
+    { id: 7, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
+    { id: 8, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
+    { id: 9, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
+    { id: 10, type: 'RBT', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
+    { id: 11, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
+    { id: 12, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 9, Year: 2023, merchantName: "hi", status: "eeee" },
+    { id: 13, type: 'PULL', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
+    { id: 14, type: 'RBT', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
+    { id: 15, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 10, Year: 2023, merchantName: "hello", status: "eeee" },
+    { id: 16, type: 'PULL', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
+    { id: 17, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
+    { id: 18, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" }
+  ], []);
+
+  const filteredData = useMemo(() => {
+    let filtered = data;
+
+    if (selectedReportType) {
+      filtered = filtered.filter((item) => item.type.toLowerCase() === selectedReportType.toLowerCase());
+    }
+
+    const selectedDateObject = new Date(selectedDate);
+    const dateString = selectedDateObject.toDateString();
+    const [selectedMonth, , selectedYear] = dateString.split(' ').slice(1, 4);
+    const monthNumber = monthAbbreviations[selectedMonth];
+    const toSelectedDateObject = new Date(toSelectedDate);
+    const toDateString = toSelectedDateObject.toDateString();
+    const [toSelectedMonth, , toSelectedYear] = toDateString.split(' ').slice(1, 4);
+    const toMonthNumber = monthAbbreviations[toSelectedMonth];
+
+    if (selectedYear && toSelectedYear) {
+      filtered = filtered.filter((item) => ((item.Year >= Number(selectedYear)) && (item.Year <= Number(toSelectedYear))));
+    }
+
+    if (monthNumber) {
+      filtered = filtered.filter((item) => ((item.Month >= Number(monthNumber)) && (item.Month <= Number(toMonthNumber))));
+    }
+
+    return viewAll ? filtered : filtered.slice(0, 15);
+  }, [data, selectedReportType, selectedDate, toSelectedDate, viewAll]);
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
+  const handleToDateChange = (date) => {
+    setToSelectedDate(date);
+  };
+
+  const handleDropdownChange = (value) => {
+    setSelectedReportType(value);
+  };
+
+  const handleSaveClick = (rowId) => {
+    if (editableRows.has(rowId)) {
+      setAlertMessage(`Changes saved successfully for row ${Number(rowId) + 1}`);
+      setShowAlert(true);
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 3500);
+    }
+  };
+
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
+
+  const columns = useMemo(() => [
+    {
+      Header: 'Notes',
+      accessor: 'notes',
+      Cell: ({ row }) => (
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <TextField
+            defaultValue={editedValues[row.id]?.notes ?? row.original.notes}
+            onBlur={(e) => {
+              setEditedValues((prev) => ({ ...prev, [row.id]: { ...prev[row.id], notes: e.target.value } }));
+            }}
+            sx={{ color: "#0B3782", "& fieldset": { border: 'none' } }}
+            multiline
+            InputProps={{
+              readOnly: !editableRows.has(row.id),
+              inputProps: {
+                style: { textAlign: 'center' },
+              },
+            }}
+          />
+          {additionalNotes.get(row.id)?.map((note, index) => (
+            <TextField
+              key={index}
+              value={note}
+              onChange={(e) => {
+                const newNotes = new Map(additionalNotes);
+                newNotes.set(row.id, [...(newNotes.get(row.id) || []), e.target.value]);
+                setAdditionalNotes(newNotes);
+              }}
+              onBlur={(e) => {
+                setEditedValues((prev) => ({
+                  ...prev,
+                  [row.id]: {
+                    ...prev[row.id],
+                    notes: [
+                      row.original.notes,
+                      ...(additionalNotes.get(row.id) || []),
+                      e.target.value.trim()
+                    ].join(' '),
+                  },
+                }));
+              }}
+              sx={{ color: "#0B3782", "& fieldset": { border: 'none' } }}
+              multiline
+              InputProps={{
+                readOnly: !editableRows.has(row.id),
+                inputProps: {
+                  style: { textAlign: 'center' },
+                }
+              }}
+            />
+          ))}
+          {editableRows.has(row.id) && (
+            <IconButton onClick={() => handleAddNote(row.id)}>
+              <AddSharpIcon sx={{ color: 'grey', borderRadius: '50%', border: '1px solid grey', width: "1.5rem", height: "1.5rem" }} />
+            </IconButton>
+          )}
+        </Box>
+      )
+    },
+    {
+      Header: 'Status',
+      accessor: 'status',
+      Cell: ({ row }) => (
+        <TextField
+          defaultValue={editedValues[row.id]?.status ?? row.original.status}
+          onBlur={(e) => {
+            setEditedValues((prev) => ({ ...prev, [row.id]: { ...prev[row.id], status: e.target.value } }));
+          }}
+          sx={{ color: "#0B3782", "& fieldset": { border: 'none' } }}
+          multiline
+          InputProps={{
+            readOnly: !editableRows.has(row.id),
+            inputProps: {
+              style: { textAlign: 'center' }
+            }
+          }}
+        />
+      )
+    },
+    {
+      Header: 'Approved',
+      accessor: 'approved',
+      Cell: ({ row }) => (
+        <Checkbox
+          checked={editedValues[row.id]?.approved ?? row.original.approved}
+          onChange={(e) => {
+            setEditedValues((prev) => ({ ...prev, [row.id]: { ...prev[row.id], approved: e.target.checked } }));
+          }}
+          style={{
+            color: "#008b78",
+          }}
+          disabled={!editableRows.has(row.id)}
+        />
+      )
+    },
+    {
+      Header: 'Edit/Save',
+      accessor: 'actions',
+      Cell: ({ row }) => (
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => {
+            setEditableRows((prevRows) => {
+              const newRows = new Set(prevRows);
+              newRows.has(row.id) ? newRows.delete(row.id) : newRows.add(row.id);
+              return newRows;
+            });
+          }}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              setEditableRows((prevRows) => {
+                const newRows = new Set(prevRows);
+                newRows.has(row.id) ? newRows.delete(row.id) : newRows.add(row.id);
+                return newRows;
+              });
+            }
+          }}
+          style={{
+            cursor: 'pointer',
+            marginLeft: '1.15rem'
+          }}
+        >
+          {editableRows.has(row.id) ? (
+            <SaveButton onClick={() => handleSaveClick(row.id)} />
+          ) : (
+            <EditButton />
+          )}
+        </div>
+      )
+    },
+  ], [editableRows, editedValues, additionalNotes]);
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = useTable({ columns, data: filteredData });
+
+  return (
+    <Box>
+      <MainCard title={<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span>Reports History</span>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DesktopDatePicker
+            sx={{ width: "21%", color: "#0B3782" }}
+            views={['year', 'month']}
+            label="From Date"
+            inputFormat="MM/YYYY"
+            onChange={handleDateChange}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
+        <span style={{ borderBottom: '2px solid grey', width: '11px', display: 'inline-block' }}></span>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DesktopDatePicker
+            sx={{ width: "21%", color: "#0B3782" }}
+            views={['year', 'month']}
+            label="To Date"
+            inputFormat="MM/YYYY"
+            onChange={handleToDateChange}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
+        <DropdownList
+          selectedTypes={reportTypes}
+          placeholder={'Choose report type'}
+          value={selectedReportType}
+          onChange={handleDropdownChange}
+          wrapperClassName="w-full"
+        />
+      </div>}>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <SubCard>
+              <Grid container spacing={1}>
+                <Grid item xs={12}>
+                  <table {...getTableProps()} style={{ borderCollapse: 'collapse', width: '100%' }}>
+                    <thead>
+                      {headerGroups.map((headerGroup) => (
+                        <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
+                          {headerGroup.headers.map((column) => (
+                            <th
+                              {...column.getHeaderProps()}
+                              style={{
+                                padding: '8px',
+                                borderBottom: '1px solid #ddd',
+                                fontSize: '15px',
+                              }}
+                              key={column.id}
+                            >
+                              {column.render('Header')}
+                            </th>
+                          ))}
+                        </tr>
+                      ))}
+                    </thead>
+                    <tbody {...getTableBodyProps()}>
+                      {rows.map((row) => {
+                        prepareRow(row);
+                        return (
+                          <tr {...row.getRowProps()} style={{ borderBottom: '1px solid #ddd' }} key={row.id}>
+                            {row.cells.map((cell) => (
+                              <td {...cell.getCellProps()} style={{ padding: '8px', textAlign: 'center' }} key={cell.column.id}>
+                                {cell.render('Cell')}
+                              </td>
+                            ))}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </Grid>
+              </Grid>
+              <CardActions sx={{ p: 1.25, pt: 2, justifyContent: 'center' }}>
+                <Button size="small" disableElevation onClick={() => setViewAll(!viewAll)}>
+                  {(viewAll) && (filteredData.length > 15) ? 'View Less' : 'View All'}
+                  <ChevronRightOutlinedIcon />
+                </Button>
+              </CardActions>
+            </SubCard>
+          </Grid>
+        </Grid>
+      </MainCard>
+      {showAlert && (
+        <Box
+          position="fixed"
+          bottom="0"
+          left="50%"
+          transform="translateX(-50%)"
+          width="100%"
+          display="flex"
+          justifyContent="center"
+          alignItems="flex-end"
+          padding="16px"
+        >
+          {showAlert && (
+            <Alert severity="success" onClose={handleCloseAlert} sx={{ width: '100%', maxWidth: '600px', backgroundColor: "#fff" }}>
+              {alertMessage}
+            </Alert>
+          )}
+        </Box>
+      )}
+    </Box>
+  );
 };
 
 export default Operator;
