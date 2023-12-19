@@ -7,10 +7,10 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useTable } from 'react-table';
 
 // material-ui
-import { Grid, Checkbox, TextField, IconButton, Alert, Link, Typography, Box, Select, MenuItem, Button, CardActions, Tooltip, SvgIcon } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
+import { Grid, Checkbox, TextField, IconButton, Alert, Link, Typography, Box, Select, MenuItem, Button, CardActions } from '@mui/material';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
+import AddSharpIcon from '@mui/icons-material/AddSharp';
 
 // project imports
 import SubCard from '../../../ui-component/cards/SubCard';
@@ -18,6 +18,8 @@ import MainCard from '../../../ui-component/cards/MainCard';
 import logo from 'assets/images/icons/excel.png';
 import DropdownList from '../../../ui-component/extended/DropdownList';
 import { reportTypes, merchantName } from '../../../store/typesData';
+import EditButton from '../../../ui-component/EditButton/EditButton';
+import SaveButton from '../../../ui-component/SaveButton/SaveButton';
 
 const monthAbbreviations = {
   Jan: 1,
@@ -34,13 +36,12 @@ const monthAbbreviations = {
   Dec: 12,
 };
 
-const extractFileName = (filePath) => {
-  const fileName = filePath.split('/').pop();
-  return fileName;
-};
+const ReportFileCell = ({ value, row, isEditable }) => {
+  const fileName = useMemo(() => {
+    const { id, type, Month, Year } = row.original;
+    return `${id}_${type}_${Month}_${Year}`;
+  }, [value, row]);
 
-const ReportFileCell = ({ value, isEditable }) => {
-  const fileName = extractFileName(value);
   if (isEditable) {
     return (
       <IconButton disabled>
@@ -80,6 +81,14 @@ const PopularCard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [toSelectedDate, setToSelectedDate] = useState(new Date());
   const [viewAll, setViewAll] = useState(false);
+  const [additionalNotes, setAdditionalNotes] = useState(new Map());
+  const handleAddNote = (rowId) => {
+    setAdditionalNotes((prevNotes) => {
+      const newNotes = new Map(prevNotes);
+      newNotes.set(rowId, [...(newNotes.get(rowId) || []), '']);
+      return newNotes;
+    });
+  };
 
   const data = useMemo(() => [
     { id: 1, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1Default Notes 1Default Notes 1', approved: 1, Month: 11, Year: 2023, merchantName: "hello", status: "eeee" },
@@ -89,8 +98,8 @@ const PopularCard = () => {
     { id: 5, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
     { id: 6, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
     { id: 7, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 8, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 3, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 9, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 2, Year: 2023, merchantName: "hi", status: "eeee" },
+    { id: 8, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
+    { id: 9, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
     { id: 10, type: 'RBT', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
     { id: 11, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
     { id: 12, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 9, Year: 2023, merchantName: "hi", status: "eeee" },
@@ -115,17 +124,19 @@ const PopularCard = () => {
 
     const selectedDateObject = new Date(selectedDate);
     const dateString = selectedDateObject.toDateString();
-    const [selectedMonth, number, selectedYear] = dateString.split(' ').slice(1, 4);
+    const [selectedMonth, , selectedYear] = dateString.split(' ').slice(1, 4);
     const monthNumber = monthAbbreviations[selectedMonth];
+    const toSelectedDateObject = new Date(toSelectedDate);
+    const toDateString = toSelectedDateObject.toDateString();
+    const [toSelectedMonth, , toSelectedYear] = toDateString.split(' ').slice(1, 4);
+    const toMonthNumber = monthAbbreviations[toSelectedMonth];
 
-    console.log('kk', monthNumber, selectedYear, number);
-
-    if (selectedYear) {
-      filtered = filtered.filter((item) => item.Year === Number(selectedYear));
+    if (selectedYear && toSelectedYear) {
+      filtered = filtered.filter((item) => ((item.Year >= Number(selectedYear)) && (item.Year <= Number(toSelectedYear))));
     }
 
     if (monthNumber) {
-      filtered = filtered.filter((item) => item.Month === monthNumber);
+      filtered = filtered.filter((item) => ((item.Month >= Number(monthNumber)) && (item.Month <= Number(toMonthNumber))));
     }
 
     return viewAll ? filtered : filtered.slice(0, 15);
@@ -180,33 +191,72 @@ const PopularCard = () => {
             </MenuItem>
           ))}
         </Select>
-      ),
+      )
     },
     {
       Header: 'Report File',
       accessor: 'file',
       Cell: ({ row }) => (
-        <ReportFileCell value={row.original.file} isEditable={editableRows.has(row.id)} />
-      ),
+        <ReportFileCell value={row.original.file} row={row} isEditable={editableRows.has(row.id)} />
+      )
     },
     {
       Header: 'Notes',
       accessor: 'notes',
       Cell: ({ row }) => (
-        <TextField
-          defaultValue={editedValues[row.id]?.notes ?? row.original.notes}
-          onBlur={(e) => {
-            setEditedValues((prev) => ({ ...prev, [row.id]: { ...prev[row.id], notes: e.target.value } }));
-          }}
-          sx={{ color: "#0B3782", "& fieldset": { border: 'none' } }}
-          multiline
-          InputProps={{
-            readOnly: !editableRows.has(row.id),
-            inputProps: {
-              style: { textAlign: 'center' }
-            }
-          }}
-        />
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <TextField
+            defaultValue={editedValues[row.id]?.notes ?? row.original.notes}
+            onBlur={(e) => {
+              setEditedValues((prev) => ({ ...prev, [row.id]: { ...prev[row.id], notes: e.target.value } }));
+            }}
+            sx={{ color: "#0B3782", "& fieldset": { border: 'none' } }}
+            multiline
+            InputProps={{
+              readOnly: !editableRows.has(row.id),
+              inputProps: {
+                style: { textAlign: 'center' },
+              },
+            }}
+          />
+          {additionalNotes.get(row.id)?.map((note, index) => (
+            <TextField
+              key={index}
+              value={note}
+              onChange={(e) => {
+                const newNotes = new Map(additionalNotes);
+                newNotes.set(row.id, [...(newNotes.get(row.id) || []), e.target.value]);
+                setAdditionalNotes(newNotes);
+              }}
+              onBlur={(e) => {
+                setEditedValues((prev) => ({
+                  ...prev,
+                  [row.id]: {
+                    ...prev[row.id],
+                    notes: [
+                      row.original.notes,
+                      ...(additionalNotes.get(row.id) || []),
+                      e.target.value.trim()
+                    ].join(' '),
+                  },
+                }));
+              }}
+              sx={{ color: "#0B3782", "& fieldset": { border: 'none' } }}
+              multiline
+              InputProps={{
+                readOnly: !editableRows.has(row.id),
+                inputProps: {
+                  style: { textAlign: 'center' },
+                },
+              }}
+            />
+          ))}
+          {editableRows.has(row.id) && (
+            <IconButton onClick={() => handleAddNote(row.id)}>
+              <AddSharpIcon sx={{ color: 'grey', borderRadius: '50%', border: '1px solid grey', width: "1.5rem", height: "1.5rem" }} />
+            </IconButton>
+          )}
+        </Box>
       ),
     },
     {
@@ -227,7 +277,7 @@ const PopularCard = () => {
             }
           }}
         />
-      ),
+      )
     },
     {
       Header: 'Approved',
@@ -238,16 +288,20 @@ const PopularCard = () => {
           onChange={(e) => {
             setEditedValues((prev) => ({ ...prev, [row.id]: { ...prev[row.id], approved: e.target.checked } }));
           }}
-          sx={{ color: "#0B3782" }}
+          style={{
+            color: "#008b78",
+          }}
           disabled={!editableRows.has(row.id)}
         />
-      ),
+      )
     },
     {
       Header: 'Edit/Save',
       accessor: 'actions',
       Cell: ({ row }) => (
-        <IconButton
+        <div
+          role="button"
+          tabIndex={0}
           onClick={() => {
             setEditableRows((prevRows) => {
               const newRows = new Set(prevRows);
@@ -255,128 +309,29 @@ const PopularCard = () => {
               return newRows;
             });
           }}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              setEditableRows((prevRows) => {
+                const newRows = new Set(prevRows);
+                newRows.has(row.id) ? newRows.delete(row.id) : newRows.add(row.id);
+                return newRows;
+              });
+            }
+          }}
+          style={{
+            cursor: 'pointer',
+            marginLeft: '1.15rem'
+          }}
         >
-          {editableRows.has(row.id) ?
-            <Button
-              onClick={() => handleSaveClick(row.id)}
-              sx={{
-                width: '100px',
-                height: '40px',
-                borderRadius: '40px',
-                border: '1px solid rgba(255, 255, 255, 0.349)',
-                backgroundColor: 'rgb(11, 55, 130, 1)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                transitionDuration: '.3s',
-                overflow: 'hidden',
-                '&:hover': {
-                  backgroundColor: 'rgba(11, 55, 130, 1)'
-                },
-                '&:active': {
-                  transform: 'scale(0.95)',
-                }
-              }}
-            >
-              <Box
-                sx={{
-                  width: '30px',
-                  height: '30px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  overflow: 'hidden',
-                  zIndex: 2,
-                  transitionDuration: '.3s',
-                  backgroundColor: "rgba(11, 55, 130, 1)",
-                  '&:hover': {
-                    width: '90px',
-                    borderRadius: '40px',
-                  },
-                }}
-              >
-                <SvgIcon
-                  viewBox="0 0 384 512"
-                  height="0.9em"
-                  sx={{
-                    borderRadius: '1px',
-                    color: "rgba(255, 255, 255, 1)"
-                  }}
-                >
-                  <path d="M0 48V487.7C0 501.1 10.9 512 24.3 512c5 0 9.9-1.5 14-4.4L192 400 345.7 507.6c4.1 2.9 9 4.4 14 4.4c13.4 0 24.3-10.9 24.3-24.3V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48z"></path>
-                </SvgIcon>
-              </Box>
-              <Typography
-                variant="body1"
-                sx={{
-                  height: '100%',
-                  width: '60px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white',
-                  zIndex: 1,
-                  transitionDuration: '.3s',
-                  fontSize: '13px',
-                  '&:hover': {
-                    transform: 'translate(10px)',
-                    width: '0',
-                    fontSize: '0',
-                  },
-                }}
-              >
-                Save
-              </Typography>
-            </Button> :
-            <Tooltip arrow>
-              <IconButton
-                sx={{
-                  width: '35px',
-                  height: '35px',
-                  borderRadius: '50%',
-                  backgroundColor: '#0B3782',
-                  fontWeight: 600,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  transitionDuration: '0.3s',
-                  overflow: 'hidden',
-                  position: 'relative',
-                  textDecoration: 'none !important',
-                  '&:hover': {
-                    width: '120px',
-                    borderRadius: '50px',
-                    transitionDuration: '0.3s',
-                    backgroundColor: 'rgba(11, 55, 130, 0.9)',
-                    alignItems: 'center',
-                  },
-                  '&::before': {
-                    display: 'none',
-                    content: '"Edit"',
-                    color: 'white',
-                    transitionDuration: '0.3s',
-                    fontSize: '2px',
-                  },
-                  '&:hover::before': {
-                    display: 'block',
-                    paddingRight: '10px',
-                    fontSize: '13px',
-                    opacity: 1,
-                    transform: 'translateY(0px)',
-                    transitionDuration: '0.3s',
-                  },
-                }}
-              >
-                <EditIcon sx={{ fill: 'white', transitionDuration: '0.3s' }} />
-              </IconButton>
-            </Tooltip>}
-        </IconButton>
-      ),
+          {editableRows.has(row.id) ? (
+            <SaveButton onClick={() => handleSaveClick(row.id)} />
+          ) : (
+            <EditButton />
+          )}
+        </div>
+      )
     },
-  ], [editableRows, editedValues]);
+  ], [editableRows, editedValues, additionalNotes]);
 
   const {
     getTableProps,
@@ -399,6 +354,7 @@ const PopularCard = () => {
         />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DesktopDatePicker
+            sx={{ width: "21%", color: "#0B3782" }}
             views={['year', 'month']}
             label="From Date"
             inputFormat="MM/YYYY"
@@ -406,9 +362,10 @@ const PopularCard = () => {
             renderInput={(params) => <TextField {...params} />}
           />
         </LocalizationProvider>
-        <span style={{ borderBottom: '2px solid grey', width: '13px', display: 'inline-block' }}></span>
+        <span style={{ borderBottom: '2px solid grey', width: '11px', display: 'inline-block' }}></span>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DesktopDatePicker
+            sx={{ width: "21%", color: "#0B3782" }}
             views={['year', 'month']}
             label="To Date"
             inputFormat="MM/YYYY"
@@ -489,7 +446,7 @@ const PopularCard = () => {
           padding="16px"
         >
           {showAlert && (
-            <Alert severity="success" onClose={handleCloseAlert} sx={{ width: '100%', maxWidth: '600px' }}>
+            <Alert severity="success" onClose={handleCloseAlert} sx={{ width: '100%', maxWidth: '600px', backgroundColor: "#fff" }}>
               {alertMessage}
             </Alert>
           )}

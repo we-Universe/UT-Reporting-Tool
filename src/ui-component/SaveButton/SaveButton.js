@@ -3,10 +3,10 @@ import style from './SaveButton.module.css';
 
 import { SvgIcon } from '@mui/material';
 
-const SaveButton = () => {
+const SaveButton = ({ onClick }) => {
   return (
     <div>
-      <button className={style.bookmarkBtn}>
+      <button className={style.bookmarkBtn} onClick={onClick}>
         <span className={style.IconContainer}>
           <SvgIcon
             viewBox="0 0 384 512"
