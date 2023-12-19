@@ -100,7 +100,8 @@ const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')))
 // utilities routing
 const UtilsTypography = Loadable(lazy(() => import('views/utilities/Form')));
 const UtilsColor = Loadable(lazy(() => import('views/utilities/Contract')));
-const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
+const UtilsServiceInfo = Loadable(lazy(() => import('views/utilities/ServicesInfo')));
+const UtilsMerchantInfo = Loadable(lazy(() => import('views/utilities/MerchantInfo/MerchantInfo')));
 const UtilsMaterialIcons = Loadable(lazy(() => import('views/utilities/MaterialIcons')));
 const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons')));
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
@@ -147,8 +148,17 @@ const MainRoutes = {
       path: 'utils',
       children: [
         {
-          path: 'util-shadow',
-          element: <UtilsShadow />
+          path: 'util-servicesInfo',
+          element: <UtilsServiceInfo />
+        }
+      ]
+    },
+    {
+      path: 'utils',
+      children: [
+        {
+          path: 'util-merchantInfo',
+          element: <UtilsMerchantInfo />
         }
       ]
     },

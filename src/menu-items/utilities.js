@@ -33,10 +33,18 @@ const utilities = {
       breadcrumbs: false
     },
     {
-      id: 'util-shadow',
-      title: 'Shadow',
+      id: 'util-servicesInfo',
+      title: 'Services Info',
       type: 'item',
-      url: '/utils/util-shadow',
+      url: '/utils/util-servicesInfo',
+      icon: icons.IconShadow,
+      breadcrumbs: false
+    },
+    {
+      id: 'util-merchantInfo',
+      title: 'Merchant Info',
+      type: 'item',
+      url: '/utils/util-merchantInfo',
       icon: icons.IconShadow,
       breadcrumbs: false
     },

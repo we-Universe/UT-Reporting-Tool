@@ -1,24 +1,12 @@
 import React from 'react';
 
 // material-ui
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TextField,
-  Autocomplete,
-  Box,
-  Typography
-} from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Autocomplete } from '@mui/material';
 import styled from '@emotion/styled';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-import SecondaryAction from 'ui-component/cards/CardSecondaryAction';
+import { useTheme } from '@mui/material/styles';
 
 //import dayjs from 'dayjs';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -26,7 +14,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 
-// ============================|| UTILITIES SHADOW ||============================ //
+// ============================|| UTILITIES SERVICES INFO ||============================ //
 
 function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
@@ -56,11 +44,12 @@ const top100Films = [
   { label: 'Pulp Fiction', year: 1994 }
 ];
 
-const UtilitiesShadow = () => {
+const UtilitiesServicesInfo = () => {
   //const [value] = React.useState(new Date('2022-04-17'));
+  const theme = useTheme();
 
   return (
-    <MainCard title="Custom Dropdown with Text Field" secondary={<SecondaryAction link="https://next.material-ui.com/system/shadows/" />}>
+    <MainCard title="Services Info">
       <Autocomplete
         disablePortal
         id="combo-box-demo"
@@ -69,16 +58,14 @@ const UtilitiesShadow = () => {
         renderInput={(params) => <TextField {...params} label="Merchant Name" />}
       />
 
-      <Box sx={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
-        <Typography sx={{ padding: '15px 0px' }}>Billing Period:</Typography>
-        <TextField variant="outlined" placeholder="Enter Billing Period" />
-      </Box>
-
       <StyledTableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
+          <TableHead sx={{ backgroundColor: theme.palette.primary.light }}>
             <TableRow>
               <TableCell>Service Name</TableCell>
+              <TableCell> Operator Share</TableCell>
+              <TableCell>MTIT File </TableCell>
+              <TableCell>Status</TableCell>
               <TableCell align="right"> Launched Date</TableCell>
             </TableRow>
           </TableHead>
@@ -88,6 +75,9 @@ const UtilitiesShadow = () => {
                 <TableCell component="th" scope="row">
                   {row.name}
                 </TableCell>
+                <TableCell component="th" scope="row"></TableCell>
+                <TableCell component="th" scope="row"></TableCell>
+                <TableCell component="th" scope="row"></TableCell>
                 <TableCell align="right">
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DesktopDatePicker
@@ -106,4 +96,4 @@ const UtilitiesShadow = () => {
   );
 };
 
-export default UtilitiesShadow;
+export default UtilitiesServicesInfo;
