@@ -7,17 +7,15 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useTable } from 'react-table';
 
 // material-ui
-import { Grid, Checkbox, TextField, IconButton, Alert, Link, Typography, Box, Select, MenuItem, Button, CardActions } from '@mui/material';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
+import { Grid, Checkbox, TextField, IconButton, Alert, Box, Button, CardActions } from '@mui/material';
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 import AddSharpIcon from '@mui/icons-material/AddSharp';
 
 // project imports
 import SubCard from '../../ui-component/cards/SubCard';
 import MainCard from '../../ui-component/cards/MainCard';
-import logo from 'assets/images/icons/excel.png';
 import DropdownList from '../../ui-component/extended/DropdownList';
-import { reportTypes, merchantName } from '../../store/typesData';
+import { reportTypes } from '../../store/typesData';
 import EditButton from '../../ui-component/EditButton/EditButton';
 import SaveButton from '../../ui-component/SaveButton/SaveButton';
 
@@ -36,52 +34,17 @@ const monthAbbreviations = {
   Dec: 12,
 };
 
-const ReportFileCell = ({ value, row, isEditable }) => {
-  const fileName = useMemo(() => {
-    const { id, type, Month, Year } = row.original;
-    return `${id}_${type}_${Month}_${Year}`;
-  }, [value, row]);
-
-  if (isEditable) {
-    return (
-      <IconButton disabled>
-        <FileCopyIcon />
-      </IconButton>
-    );
-  }
-
-  return (
-    <Box sx={{ display: 'flex', paddingLeft: "2rem" }}>
-      <Link href={`${value}`} target="_blank" rel="noopener noreferrer">
-        <img src={logo} alt="Universe" width="25" />
-      </Link>
-      <Link href={`${value}`} target="_blank" rel="noopener noreferrer">
-        <Typography variant="h3"
-          sx={{
-            color: '#0B3782',
-            padding: '8px',
-            fontSize: '15px',
-            fontWeight: 500,
-            backgroundColor: "#f8fafc",
-            borderRadius: "12px"
-          }}> {fileName}
-        </Typography>
-      </Link>
-    </Box>
-  );
-};
-
 const Operator = () => {
   const [editableRows, setEditableRows] = useState(new Set());
   const [editedValues, setEditedValues] = useState({});
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [selectedReportType, setSelectedReportType] = useState('');
-  const [selectedMerchantName, setSelectedMerchantName] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [toSelectedDate, setToSelectedDate] = useState(new Date());
   const [viewAll, setViewAll] = useState(false);
   const [additionalNotes, setAdditionalNotes] = useState(new Map());
+
   const handleAddNote = (rowId) => {
     setAdditionalNotes((prevNotes) => {
       const newNotes = new Map(prevNotes);
@@ -118,10 +81,6 @@ const Operator = () => {
       filtered = filtered.filter((item) => item.type.toLowerCase() === selectedReportType.toLowerCase());
     }
 
-    if (selectedMerchantName) {
-      filtered = filtered.filter((item) => item.merchantName.toLowerCase() === selectedMerchantName.toLowerCase());
-    }
-
     const selectedDateObject = new Date(selectedDate);
     const dateString = selectedDateObject.toDateString();
     const [selectedMonth, , selectedYear] = dateString.split(' ').slice(1, 4);
@@ -140,7 +99,7 @@ const Operator = () => {
     }
 
     return viewAll ? filtered : filtered.slice(0, 15);
-  }, [data, selectedReportType, selectedMerchantName, selectedDate, toSelectedDate, viewAll]);
+  }, [data, selectedReportType, selectedDate, toSelectedDate, viewAll]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -152,10 +111,6 @@ const Operator = () => {
 
   const handleDropdownChange = (value) => {
     setSelectedReportType(value);
-  };
-
-  const handleMerchantDropdownChange = (value) => {
-    setSelectedMerchantName(value);
   };
 
   const handleSaveClick = (rowId) => {
@@ -173,33 +128,6 @@ const Operator = () => {
   };
 
   const columns = useMemo(() => [
-    {
-      Header: 'Merchant Name',
-      accessor: 'merchantName',
-      Cell: ({ row }) => (
-        <Select
-          value={editedValues[row.id]?.merchantName ?? row.original.merchantName}
-          onChange={(e) => {
-            setEditedValues((prev) => ({ ...prev, [row.id]: { ...prev[row.id], merchantName: e.target.value } }));
-          }}
-          sx={{ color: "#0B3782", "& fieldset": { border: 'none' } }}
-          disabled={!editableRows.has(row.id)}
-        >
-          {merchantName.map((merchantName) => (
-            <MenuItem key={merchantName} value={merchantName}>
-              {merchantName}
-            </MenuItem>
-          ))}
-        </Select>
-      )
-    },
-    {
-      Header: 'Report File',
-      accessor: 'file',
-      Cell: ({ row }) => (
-        <ReportFileCell value={row.original.file} row={row} isEditable={editableRows.has(row.id)} />
-      )
-    },
     {
       Header: 'Notes',
       accessor: 'notes',
@@ -345,13 +273,6 @@ const Operator = () => {
     <Box>
       <MainCard title={<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span>Reports History</span>
-        <DropdownList
-          selectedTypes={merchantName}
-          placeholder={'Choose merchant name'}
-          value={selectedMerchantName}
-          onChange={handleMerchantDropdownChange}
-          wrapperClassName="w-full"
-        />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DesktopDatePicker
             sx={{ width: "21%", color: "#0B3782" }}
