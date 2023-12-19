@@ -1,8 +1,8 @@
 import React from 'react';
 
 // material-ui
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Autocomplete } from '@mui/material';
-import styled from '@emotion/styled';
+import { Table, TableBody, TableCell, TableHead, TableRow, TextField, Autocomplete } from '@mui/material';
+//import styled from '@emotion/styled';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -13,6 +13,9 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import EditButton from 'ui-component/EditButton/EditButton';
+import SaveButton from 'ui-component/SaveButton/SaveButton';
+//import SaveButton from 'ui-component/SaveButton/SaveButton';
 
 // ============================|| UTILITIES SERVICES INFO ||============================ //
 
@@ -28,11 +31,11 @@ const rows = [
   createData('Gingerbread', 356, 16.0, 49, 3.9)
 ];
 
-const StyledTableContainer = styled(TableContainer)({
-  border: '1px solid #ccc',
-  fontWeight: 'bold',
-  fontSize: '24px'
-});
+// const StyledTableContainer = styled(TableContainer)({
+//   border: '1px solid #ccc',
+//   fontWeight: 'bold',
+//   fontSize: '24px'
+// });
 
 const top100Films = [
   { label: 'The Shawshank Redemption', year: 1994 },
@@ -58,40 +61,39 @@ const UtilitiesServicesInfo = () => {
         renderInput={(params) => <TextField {...params} label="Merchant Name" />}
       />
 
-      <StyledTableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead sx={{ backgroundColor: theme.palette.primary.light }}>
-            <TableRow>
-              <TableCell>Service Name</TableCell>
-              <TableCell> Operator Share</TableCell>
-              <TableCell>MTIT File </TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell align="right"> Launched Date</TableCell>
+      <Table>
+        <TableHead sx={{ backgroundColor: theme.palette.primary.light }}>
+          <TableRow>
+            <TableCell>Service Name</TableCell>
+            <TableCell> Operator Share</TableCell>
+            <TableCell>MTIT File </TableCell>
+            <TableCell>Status</TableCell>
+            <TableCell> Launched Date</TableCell>
+            <TableCell>Edit/Save</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rows.map((row, index) => (
+            <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+              <TableCell component="th" scope="row">
+                {row.name}
+              </TableCell>
+              <TableCell component="th" scope="row"></TableCell>
+              <TableCell component="th" scope="row"></TableCell>
+              <TableCell component="th" scope="row"></TableCell>
+              <TableCell>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DesktopDatePicker label=" Launched Date" inputFormat="MM/DD/YYYY" renderInput={(params) => <TextField {...params} />} />
+                </LocalizationProvider>
+              </TableCell>
+              <TableCell>
+                <EditButton />
+                <SaveButton />
+              </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row, index) => (
-              <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
-                <TableCell component="th" scope="row"></TableCell>
-                <TableCell component="th" scope="row"></TableCell>
-                <TableCell component="th" scope="row"></TableCell>
-                <TableCell align="right">
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DesktopDatePicker
-                      label=" Launched Date"
-                      inputFormat="MM/DD/YYYY"
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                  </LocalizationProvider>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </StyledTableContainer>
+          ))}
+        </TableBody>
+      </Table>
     </MainCard>
   );
 };

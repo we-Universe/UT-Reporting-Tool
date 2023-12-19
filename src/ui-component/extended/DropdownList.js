@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
+import { FormControl, Select, MenuItem } from '@mui/material';
 
-// material-ui
-import { FormControl, Select, MenuItem, Input } from '@mui/material';
-
-const DropdownList = ({ selectedTypes, placeholder }) => {
-  const [personName, setPersonName] = useState([]);
+const DropdownList = ({ selectedTypes, placeholder, onChange }) => {
+  const [dropdownSelectedValue, setDropdownSelectedValue] = useState('');
 
   const handleChange = (event) => {
-    setPersonName(event.target.value);
+    const selectedValue = event.target.value;
+    setDropdownSelectedValue(selectedValue);
+    if (onChange) {
+      onChange(selectedValue);
+    }
   };
 
   const MenuProps = {
@@ -22,22 +24,14 @@ const DropdownList = ({ selectedTypes, placeholder }) => {
   return (
     <FormControl>
       <Select
-        multiple
-        displayEmpty
-        value={personName}
+        value={dropdownSelectedValue}
         onChange={handleChange}
-        input={<Input />}
-        renderValue={(selected) => {
-          if (selected.length === 0) {
-            return <em style={{ opacity: 0.5 }}>{placeholder}</em>;
-          }
-          return selected.join(', ');
-        }}
         MenuProps={MenuProps}
         inputProps={{ 'aria-label': 'Without label' }}
+        displayEmpty
       >
         <MenuItem disabled value="">
-          <em>{placeholder}</em>
+          <em style={{ opacity: 0.5 }}>{placeholder}</em>
         </MenuItem>
         {selectedTypes.map((name) => (
           <MenuItem key={name} value={name}>

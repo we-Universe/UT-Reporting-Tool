@@ -1,8 +1,8 @@
 // assets
-import { IconDashboard } from '@tabler/icons';
+import { IconHistory, IconReportMoney, IconReportAnalytics } from '@tabler/icons';
 
 // constant
-const icons = { IconDashboard };
+const icons = { IconHistory, IconReportMoney, IconReportAnalytics };
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
 
@@ -13,11 +13,27 @@ const dashboard = {
   children: [
     {
       id: 'default',
-      title: 'UT Dashboard',
-      type: 'item',
-      url: '/dashboard/default',
-      icon: icons.IconDashboard,
-      breadcrumbs: false
+      title: 'Reports History',
+      type: 'collapse', 
+      icon: icons.IconHistory,
+      children: [
+        {
+          id: 'merchantreports',
+          title: 'Merchants Reports',
+          type: 'item',
+          url: '/dashboard/merchantreports',
+          icon: icons.IconReportMoney,
+          breadcrumbs: false
+        },
+        {
+          id: 'operatorsreport',
+          title: 'Operators Reports',
+          type: 'item',
+          url: '/dashboard/operatorsreport',
+          icon: icons.IconReportAnalytics,
+          breadcrumbs: false
+        }
+      ]
     }
   ]
 };
