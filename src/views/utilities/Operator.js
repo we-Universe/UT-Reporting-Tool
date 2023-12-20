@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -7,17 +8,15 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useTable } from 'react-table';
 
 // material-ui
-import { Grid, Checkbox, TextField, IconButton, Alert, Box, Button, CardActions } from '@mui/material';
+import { Grid, Checkbox, TextField, Box, Button, CardActions, Select, MenuItem } from '@mui/material';
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
-import AddSharpIcon from '@mui/icons-material/AddSharp';
 
 // project imports
 import SubCard from '../../ui-component/cards/SubCard';
 import MainCard from '../../ui-component/cards/MainCard';
 import DropdownList from '../../ui-component/extended/DropdownList';
-import { reportTypes } from '../../store/typesData';
+import { reportTypes, selectedTypes } from '../../store/typesData';
 import EditButton from '../../ui-component/EditButton/EditButton';
-import SaveButton from '../../ui-component/SaveButton/SaveButton';
 
 const monthAbbreviations = {
   Jan: 1,
@@ -31,47 +30,41 @@ const monthAbbreviations = {
   Sep: 9,
   Oct: 10,
   Nov: 11,
-  Dec: 12,
+  Dec: 12
 };
 
 const Operator = () => {
-  const [editableRows, setEditableRows] = useState(new Set());
   const [editedValues, setEditedValues] = useState({});
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
   const [selectedReportType, setSelectedReportType] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [toSelectedDate, setToSelectedDate] = useState(new Date());
   const [viewAll, setViewAll] = useState(false);
-  const [additionalNotes, setAdditionalNotes] = useState(new Map());
+  const [selectedTelecomName, setSelectedTelecomName] = useState('');
+  const navigate = useNavigate();
 
-  const handleAddNote = (rowId) => {
-    setAdditionalNotes((prevNotes) => {
-      const newNotes = new Map(prevNotes);
-      newNotes.set(rowId, [...(newNotes.get(rowId) || []), '']);
-      return newNotes;
-    });
+  const handleEditClick = (rowId) => {
+    navigate(`/utils/util-UploadReports/${rowId}`);
   };
 
   const data = useMemo(() => [
-    { id: 1, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1Default Notes 1Default Notes 1', approved: 1, Month: 11, Year: 2023, merchantName: "hello", status: "eeee" },
-    { id: 2, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 2', approved: 1, Month: 12, Year: 2023, merchantName: "hello", status: "eeee" },
-    { id: 3, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hello", status: "eeee" },
-    { id: 4, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 2, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 5, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 6, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 7, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 8, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 9, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 10, type: 'RBT', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 11, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 12, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 9, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 13, type: 'PULL', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 14, type: 'RBT', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 15, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 10, Year: 2023, merchantName: "hello", status: "eeee" },
-    { id: 16, type: 'PULL', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 17, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 18, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" }
+    { id: 1, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1Default Notes 1Default Notes 1', approved: 1, Month: 11, Year: 2023, telecomName: "Jawwal", status: "eeee" },
+    { id: 2, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 2', approved: 1, Month: 12, Year: 2023, telecomName: "Jawwal", status: "eeee" },
+    { id: 3, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Jawwal", status: "eeee" },
+    { id: 4, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 2, Year: 2023, telecomName: "Ooredoo", status: "eeee" },
+    { id: 5, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee" },
+    { id: 6, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Jawwal", status: "eeee" },
+    { id: 7, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee" },
+    { id: 8, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee" },
+    { id: 9, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Jawwal", status: "eeee" },
+    { id: 10, type: 'RBT', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee" },
+    { id: 11, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee" },
+    { id: 12, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 9, Year: 2023, telecomName: "Jawwal", status: "eeee" },
+    { id: 13, type: 'PULL', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee" },
+    { id: 14, type: 'RBT', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee" },
+    { id: 15, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 10, Year: 2023, telecomName: "Jawwal", status: "eeee" },
+    { id: 16, type: 'PULL', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Jawwal", status: "eeee" },
+    { id: 17, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee" },
+    { id: 18, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee" }
   ], []);
 
   const filteredData = useMemo(() => {
@@ -79,6 +72,10 @@ const Operator = () => {
 
     if (selectedReportType) {
       filtered = filtered.filter((item) => item.type.toLowerCase() === selectedReportType.toLowerCase());
+    }
+
+    if (selectedTelecomName) {
+      filtered = filtered.filter((item) => item.telecomName.toLowerCase() === selectedTelecomName.toLowerCase());
     }
 
     const selectedDateObject = new Date(selectedDate);
@@ -99,7 +96,7 @@ const Operator = () => {
     }
 
     return viewAll ? filtered : filtered.slice(0, 15);
-  }, [data, selectedReportType, selectedDate, toSelectedDate, viewAll]);
+  }, [data, selectedReportType, selectedTelecomName, selectedDate, toSelectedDate, viewAll]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -113,77 +110,67 @@ const Operator = () => {
     setSelectedReportType(value);
   };
 
-  const handleSaveClick = (rowId) => {
-    if (editableRows.has(rowId)) {
-      setAlertMessage(`Changes saved successfully for row ${Number(rowId) + 1}`);
-      setShowAlert(true);
-      setTimeout(() => {
-        setShowAlert(false);
-      }, 3500);
-    }
+  const handleTelecomDropdownChange = (value) => {
+    setSelectedTelecomName(value);
   };
 
-  const handleCloseAlert = () => {
-    setShowAlert(false);
+  const generateDefaultReportFileName = (telecomName, reportType, month, year) => {
+    return `${telecomName}_${reportType}_${month}_${year}`;
   };
 
   const columns = useMemo(() => [
+    {
+      Header: 'Telecom Name',
+      accessor: 'telecomName',
+      Cell: ({ row }) => (
+        <Select
+          value={row.original.telecomName}
+          sx={{ color: "#0B3782", "& fieldset": { border: 'none' } }}
+          disabled
+        >
+          {selectedTypes.map((telecomName) => (
+            <MenuItem key={telecomName} value={telecomName}>
+              {telecomName}
+            </MenuItem>
+          ))}
+        </Select>
+      )
+    },
+    {
+      Header: 'Report File Name',
+      accessor: 'reportfilename',
+      Cell: ({ row }) => (
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <TextField
+            defaultValue={generateDefaultReportFileName(row.original.telecomName, row.original.type, row.original.Month, row.original.Year)}
+            sx={{ color: "#0B3782", "& fieldset": { border: 'none' } }}
+            multiline
+            InputProps={{
+              readOnly: true,
+              inputProps: {
+                style: { textAlign: 'center' }
+              }
+            }}
+          />
+        </Box>
+      )
+    },
     {
       Header: 'Notes',
       accessor: 'notes',
       Cell: ({ row }) => (
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <TextField
-            defaultValue={editedValues[row.id]?.notes ?? row.original.notes}
-            onBlur={(e) => {
-              setEditedValues((prev) => ({ ...prev, [row.id]: { ...prev[row.id], notes: e.target.value } }));
-            }}
+            defaultValue={row.original.notes}
             sx={{ color: "#0B3782", "& fieldset": { border: 'none' } }}
             multiline
             InputProps={{
-              readOnly: !editableRows.has(row.id),
+              readOnly: true,
               inputProps: {
-                style: { textAlign: 'center' },
-              },
+                style: { textAlign: 'center' }
+              }
             }}
           />
-          {additionalNotes.get(row.id)?.map((note, index) => (
-            <TextField
-              key={index}
-              value={note}
-              onChange={(e) => {
-                const newNotes = new Map(additionalNotes);
-                newNotes.set(row.id, [...(newNotes.get(row.id) || []), e.target.value]);
-                setAdditionalNotes(newNotes);
-              }}
-              onBlur={(e) => {
-                setEditedValues((prev) => ({
-                  ...prev,
-                  [row.id]: {
-                    ...prev[row.id],
-                    notes: [
-                      row.original.notes,
-                      ...(additionalNotes.get(row.id) || []),
-                      e.target.value.trim()
-                    ].join(' '),
-                  },
-                }));
-              }}
-              sx={{ color: "#0B3782", "& fieldset": { border: 'none' } }}
-              multiline
-              InputProps={{
-                readOnly: !editableRows.has(row.id),
-                inputProps: {
-                  style: { textAlign: 'center' },
-                }
-              }}
-            />
-          ))}
-          {editableRows.has(row.id) && (
-            <IconButton onClick={() => handleAddNote(row.id)}>
-              <AddSharpIcon sx={{ color: 'grey', borderRadius: '50%', border: '1px solid grey', width: "1.5rem", height: "1.5rem" }} />
-            </IconButton>
-          )}
         </Box>
       )
     },
@@ -199,7 +186,7 @@ const Operator = () => {
           sx={{ color: "#0B3782", "& fieldset": { border: 'none' } }}
           multiline
           InputProps={{
-            readOnly: !editableRows.has(row.id),
+            readOnly: true,
             inputProps: {
               style: { textAlign: 'center' }
             }
@@ -213,53 +200,32 @@ const Operator = () => {
       Cell: ({ row }) => (
         <Checkbox
           checked={editedValues[row.id]?.approved ?? row.original.approved}
-          onChange={(e) => {
-            setEditedValues((prev) => ({ ...prev, [row.id]: { ...prev[row.id], approved: e.target.checked } }));
-          }}
           style={{
-            color: "#008b78",
+            color: "#008b78"
           }}
-          disabled={!editableRows.has(row.id)}
+          disabled
         />
       )
     },
     {
-      Header: 'Edit/Save',
+      Header: 'Edit',
       accessor: 'actions',
       Cell: ({ row }) => (
         <div
-          role="button"
-          tabIndex={0}
-          onClick={() => {
-            setEditableRows((prevRows) => {
-              const newRows = new Set(prevRows);
-              newRows.has(row.id) ? newRows.delete(row.id) : newRows.add(row.id);
-              return newRows;
-            });
-          }}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') {
-              setEditableRows((prevRows) => {
-                const newRows = new Set(prevRows);
-                newRows.has(row.id) ? newRows.delete(row.id) : newRows.add(row.id);
-                return newRows;
-              });
-            }
-          }}
           style={{
             cursor: 'pointer',
-            marginLeft: '1.15rem'
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
           }}
         >
-          {editableRows.has(row.id) ? (
-            <SaveButton onClick={() => handleSaveClick(row.id)} />
-          ) : (
-            <EditButton />
-          )}
+          <EditButton onClick={() => {
+            handleEditClick(row.original.id);
+          }} />
         </div>
       )
-    },
-  ], [editableRows, editedValues, additionalNotes]);
+    }
+  ], [editedValues]);
 
   const {
     getTableProps,
@@ -273,6 +239,13 @@ const Operator = () => {
     <Box>
       <MainCard title={<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span>Reports History</span>
+        <DropdownList
+          selectedTypes={selectedTypes}
+          placeholder={'Choose telecom name'}
+          value={selectedTelecomName}
+          onChange={handleTelecomDropdownChange}
+          wrapperClassName="w-full"
+        />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DesktopDatePicker
             sx={{ width: "21%", color: "#0B3782" }}
@@ -354,25 +327,6 @@ const Operator = () => {
           </Grid>
         </Grid>
       </MainCard>
-      {showAlert && (
-        <Box
-          position="fixed"
-          bottom="0"
-          left="50%"
-          transform="translateX(-50%)"
-          width="100%"
-          display="flex"
-          justifyContent="center"
-          alignItems="flex-end"
-          padding="16px"
-        >
-          {showAlert && (
-            <Alert severity="success" onClose={handleCloseAlert} sx={{ width: '100%', maxWidth: '600px', backgroundColor: "#fff" }}>
-              {alertMessage}
-            </Alert>
-          )}
-        </Box>
-      )}
     </Box>
   );
 };

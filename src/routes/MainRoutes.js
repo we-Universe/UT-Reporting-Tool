@@ -48,7 +48,7 @@ const MainRoutes = {
       path: 'utils',
       children: [
         {
-          path: 'util-UploadReports',
+          path: 'util-UploadReports/:id',
           element: <UtilsTypography />
         }
       ]

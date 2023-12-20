@@ -10,7 +10,6 @@ import { useTable } from 'react-table';
 import { Grid, Checkbox, TextField, IconButton, Alert, Link, Typography, Box, Select, MenuItem, Button, CardActions } from '@mui/material';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
-import AddSharpIcon from '@mui/icons-material/AddSharp';
 
 // project imports
 import SubCard from '../../../ui-component/cards/SubCard';
@@ -38,8 +37,8 @@ const monthAbbreviations = {
 
 const ReportFileCell = ({ value, row, isEditable }) => {
   const fileName = useMemo(() => {
-    const { id, type, Month, Year } = row.original;
-    return `${id}_${type}_${Month}_${Year}`;
+    const { merchantName, type, Month, Year } = row.original;
+    return `${merchantName}_${type}_${Month}_${Year}`;
   }, [value, row]);
 
   if (isEditable) {
@@ -81,14 +80,6 @@ const PopularCard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [toSelectedDate, setToSelectedDate] = useState(new Date());
   const [viewAll, setViewAll] = useState(false);
-  const [additionalNotes, setAdditionalNotes] = useState(new Map());
-  const handleAddNote = (rowId) => {
-    setAdditionalNotes((prevNotes) => {
-      const newNotes = new Map(prevNotes);
-      newNotes.set(rowId, [...(newNotes.get(rowId) || []), '']);
-      return newNotes;
-    });
-  };
 
   const data = useMemo(() => [
     { id: 1, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1Default Notes 1Default Notes 1', approved: 1, Month: 11, Year: 2023, merchantName: "hello", status: "eeee" },
@@ -215,47 +206,10 @@ const PopularCard = () => {
             InputProps={{
               readOnly: !editableRows.has(row.id),
               inputProps: {
-                style: { textAlign: 'center' },
-              },
+                style: { textAlign: 'center' }
+              }
             }}
           />
-          {additionalNotes.get(row.id)?.map((note, index) => (
-            <TextField
-              key={index}
-              value={note}
-              onChange={(e) => {
-                const newNotes = new Map(additionalNotes);
-                newNotes.set(row.id, [...(newNotes.get(row.id) || []), e.target.value]);
-                setAdditionalNotes(newNotes);
-              }}
-              onBlur={(e) => {
-                setEditedValues((prev) => ({
-                  ...prev,
-                  [row.id]: {
-                    ...prev[row.id],
-                    notes: [
-                      row.original.notes,
-                      ...(additionalNotes.get(row.id) || []),
-                      e.target.value.trim()
-                    ].join(' '),
-                  },
-                }));
-              }}
-              sx={{ color: "#0B3782", "& fieldset": { border: 'none' } }}
-              multiline
-              InputProps={{
-                readOnly: !editableRows.has(row.id),
-                inputProps: {
-                  style: { textAlign: 'center' },
-                }
-              }}
-            />
-          ))}
-          {editableRows.has(row.id) && (
-            <IconButton onClick={() => handleAddNote(row.id)}>
-              <AddSharpIcon sx={{ color: 'grey', borderRadius: '50%', border: '1px solid grey', width: "1.5rem", height: "1.5rem" }} />
-            </IconButton>
-          )}
         </Box>
       )
     },
@@ -331,7 +285,7 @@ const PopularCard = () => {
         </div>
       )
     },
-  ], [editableRows, editedValues, additionalNotes]);
+  ], [editableRows, editedValues]);
 
   const {
     getTableProps,
