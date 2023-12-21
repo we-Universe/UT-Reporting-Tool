@@ -5,7 +5,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import SubCard from 'ui-component/cards/SubCard';
 
 // material-ui
-import { TextField, Autocomplete, Box, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { TextField, Autocomplete, Box, Select, MenuItem, FormControl, InputLabel, Button } from '@mui/material';
 import EmailsTable from 'ui-component/EmailsTable/EmailsTable';
 
 // ============================|| UTILITIES Merchant INFO ||============================ //
@@ -14,28 +14,16 @@ const UtilitiesMerchantInfo = () => {
   const [merchantName, setMerchantName] = useState('');
   const [merchantNameInput, setMerchantNameInput] = useState('');
 
-  const [billingPeriod, setBillingPeriod] = useState('');
-  const [clientRef, setClientRef] = useState('');
-  const [industryType, setIndustryType] = useState('');
-  const [employeeName, setEmployeeName] = useState('');
-  const [consultantName, setConsultantName] = useState('');
+  const [merchantInfo, setMerchantInfo] = useState({
+    billingPeriod: '',
+    clientRef: '',
+    industryType: '',
+    employeeName: '',
+    consultantName: ''
+  });
 
-  const handleBillingPeriodChange = (event) => {
-    setBillingPeriod(event.target.value);
-  };
-
-  const handleClientRefChange = (event) => {
-    setClientRef(event.target.value);
-  };
-
-  const handleIndustryTypeChange = (event) => {
-    setIndustryType(event.target.value);
-  };
-  const handleEmployeeNameChange = (event) => {
-    setEmployeeName(event.target.value);
-  };
-  const handleConsultantNameChange = (event) => {
-    setConsultantName(event.target.value);
+  const handleUpdateInfo = () => {
+    console.log(merchantInfo);
   };
 
   return (
@@ -58,22 +46,26 @@ const UtilitiesMerchantInfo = () => {
         <form>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', marginBottom: '20px' }}>
             <TextField
-              label="Enter Billing Period"
+              label=" Billing Period"
               variant="outlined"
               sx={{ width: '48%', marginBottom: '20px' }}
-              value={billingPeriod}
-              onChange={handleBillingPeriodChange}
+              value={merchantInfo.billingPeriod}
+              onChange={(event) => setMerchantInfo({ ...merchantInfo, billingPeriod: event.target.value })}
             />
             <TextField
-              label="Enter Client Ref"
+              label=" Client Ref"
               variant="outlined"
               sx={{ width: '48%', marginBottom: '20px' }}
-              value={clientRef}
-              onChange={handleClientRefChange}
+              value={merchantInfo.clientRef}
+              onChange={(event) => setMerchantInfo({ ...merchantInfo, clientRef: event.target.value })}
             />
             <FormControl sx={{ width: '48%', marginBottom: '20px' }}>
-              <InputLabel>Select Industry Type</InputLabel>
-              <Select value={industryType} onChange={handleIndustryTypeChange} label="Select Industry Type">
+              <InputLabel> Industry Type</InputLabel>
+              <Select
+                value={merchantInfo.industryType}
+                onChange={(event) => setMerchantInfo({ ...merchantInfo, industryType: event.target.value })}
+                label=" Industry Type"
+              >
                 <MenuItem value={10}>Ten</MenuItem>
                 <MenuItem value={20}>Twenty</MenuItem>
                 <MenuItem value={30}>Thirty</MenuItem>
@@ -81,8 +73,12 @@ const UtilitiesMerchantInfo = () => {
             </FormControl>
 
             <FormControl sx={{ width: '48%', marginBottom: '20px' }}>
-              <InputLabel>Select Employee Name</InputLabel>
-              <Select value={employeeName} onChange={handleEmployeeNameChange} label="Select Employee Name">
+              <InputLabel> Employee Name</InputLabel>
+              <Select
+                value={merchantInfo.employeeName}
+                onChange={(event) => setMerchantInfo({ ...merchantInfo, employeeName: event.target.value })}
+                label=" Employee Name"
+              >
                 <MenuItem value={10}>Ten</MenuItem>
                 <MenuItem value={20}>Twenty</MenuItem>
                 <MenuItem value={30}>Thirty</MenuItem>
@@ -90,17 +86,27 @@ const UtilitiesMerchantInfo = () => {
             </FormControl>
 
             <FormControl sx={{ width: '48%', marginBottom: '20px' }}>
-              <InputLabel>Select Consultant Name</InputLabel>
-              <Select value={consultantName} onChange={handleConsultantNameChange} label="Select Consultant Name">
+              <InputLabel> Consultant Name</InputLabel>
+              <Select
+                value={merchantInfo.consultantName}
+                onChange={(event) => setMerchantInfo({ ...merchantInfo, consultantName: event.target.value })}
+                label=" Consultant Name"
+              >
                 <MenuItem value={10}>Ten</MenuItem>
                 <MenuItem value={20}>Twenty</MenuItem>
                 <MenuItem value={30}>Thirty</MenuItem>
               </Select>
             </FormControl>
+
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', marginBottom: '20px' }}>
+              <Button variant="outlined" color="primary" onClick={handleUpdateInfo}>
+                Update Basic Info
+              </Button>
+            </Box>
           </Box>
-
-          <EmailsTable />
         </form>
+
+        <EmailsTable />
       </SubCard>
     </MainCard>
   );
