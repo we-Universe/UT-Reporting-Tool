@@ -13,7 +13,7 @@ const UtilsServiceInfo = Loadable(lazy(() => import('views/utilities/ServicesInf
 const UtilsMerchantInfo = Loadable(lazy(() => import('views/utilities/MerchantInfo')));
 const UtilsMaterialIcons = Loadable(lazy(() => import('views/utilities/MaterialIcons')));
 const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons')));
-const SamplePage = Loadable(lazy(() => import('views/sample-page')));
+const AddUserPage = Loadable(lazy(() => import('views/adduser-page')));
 
 // Main Application Routes Configuration
 const MainRoutes = {
@@ -99,8 +99,8 @@ const MainRoutes = {
       ]
     },
     {
-      path: 'sample-page',
-      element: <SamplePage />
+      path: 'adduser-page',
+      element: <AddUserPage />
     }
   ]
 };

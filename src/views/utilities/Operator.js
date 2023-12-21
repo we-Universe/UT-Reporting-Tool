@@ -17,6 +17,9 @@ import MainCard from '../../ui-component/cards/MainCard';
 import DropdownList from '../../ui-component/extended/DropdownList';
 import { reportTypes, selectedTypes } from '../../store/typesData';
 import EditButton from '../../ui-component/EditButton/EditButton';
+import TelecomImage from '../../assets/images/icons/telecommunication.png'; 
+import NoteImage from '../../assets/images/icons/pencil.png'; 
+import StatusImage from '../../assets/images/icons/check-list.png';
 
 const monthAbbreviations = {
   Jan: 1,
@@ -120,7 +123,16 @@ const Operator = () => {
 
   const columns = useMemo(() => [
     {
-      Header: 'Telecom Name',
+      Header: () => (
+        <Box style={{ display: 'flex', alignItems: 'center' }}>
+          <img
+            src={TelecomImage} 
+            alt="Telecom Logo"
+            style={{ marginRight: '0.5rem', width: '24px', height: '24px' }}
+          />
+          <span>Telecom Name</span>
+        </Box>
+      ),
       accessor: 'telecomName',
       Cell: ({ row }) => (
         <Select
@@ -156,7 +168,16 @@ const Operator = () => {
       )
     },
     {
-      Header: 'Notes',
+      Header: () => (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img
+            src={NoteImage} 
+            alt="Note Logo"
+            style={{ marginRight: '0.5rem', width: '24px', height: '24px' }}
+          />
+          <span>Notes</span>
+        </div>
+      ),
       accessor: 'notes',
       Cell: ({ row }) => (
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -175,7 +196,16 @@ const Operator = () => {
       )
     },
     {
-      Header: 'Status',
+      Header: () => (
+        <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img
+            src={StatusImage} 
+            alt="Status Logo"
+            style={{ marginRight: '0.5rem', width: '24px', height: '24px' }}
+          />
+          <span>Status</span>
+        </Box>
+      ),
       accessor: 'status',
       Cell: ({ row }) => (
         <TextField

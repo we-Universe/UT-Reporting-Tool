@@ -14,3 +14,8 @@ export const merchantName = [
     'hi',
     'hello'
 ];
+
+export const roles = [
+    'hi',
+    'hello'
+];

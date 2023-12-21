@@ -98,7 +98,7 @@ const FirebaseLogin = ({ ...others }) => {
         //   password: Yup.string().max(255).required('Password is required')
         // })}
         onSubmit={() => {
-          window.location.href = 'main/dashboard/merchantreports';
+          window.location.href = 'dashboard/merchantreports';
           //   try {
           //     const response = await axios.post(`${apiUrl}/api/Authentication/Login`, values);
 

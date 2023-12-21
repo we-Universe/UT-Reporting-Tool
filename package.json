@@ -40,6 +40,7 @@
     "redux": "^4.2.0",
     "socket.io-client": "^4.7.2",
     "styled": "^1.0.0",
+    "validator": "^13.11.0",
     "yup": "^0.32.11"
   },
   "scripts": {

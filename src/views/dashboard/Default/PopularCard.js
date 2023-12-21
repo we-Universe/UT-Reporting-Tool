@@ -19,6 +19,9 @@ import DropdownList from '../../../ui-component/extended/DropdownList';
 import { reportTypes, merchantName } from '../../../store/typesData';
 import EditButton from '../../../ui-component/EditButton/EditButton';
 import SaveButton from '../../../ui-component/SaveButton/SaveButton';
+import MerchantImage from '../../../assets/images/icons/seller.png'; 
+import NoteImage from '../../../assets/images/icons/pencil.png'; 
+import StatusImage from '../../../assets/images/icons/check-list.png';
 
 const monthAbbreviations = {
   Jan: 1,
@@ -165,7 +168,16 @@ const PopularCard = () => {
 
   const columns = useMemo(() => [
     {
-      Header: 'Merchant Name',
+      Header: () => (
+        <Box style={{ display: 'flex', alignItems: 'center' }}>
+          <img
+            src={MerchantImage} 
+            alt="Merchant Logo"
+            style={{ marginRight: '0.5rem', width: '24px', height: '24px' }}
+          />
+          <span>Merchant Name</span>
+        </Box>
+      ),
       accessor: 'merchantName',
       Cell: ({ row }) => (
         <Select
@@ -192,7 +204,16 @@ const PopularCard = () => {
       )
     },
     {
-      Header: 'Notes',
+      Header: () => (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img
+            src={NoteImage} 
+            alt="Note Logo"
+            style={{ marginRight: '0.5rem', width: '24px', height: '24px' }}
+          />
+          <span>Notes</span>
+        </div>
+      ),
       accessor: 'notes',
       Cell: ({ row }) => (
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -214,7 +235,16 @@ const PopularCard = () => {
       )
     },
     {
-      Header: 'Status',
+      Header: () => (
+        <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img
+            src={StatusImage} 
+            alt="Status Logo"
+            style={{ marginRight: '0.5rem', width: '24px', height: '24px' }}
+          />
+          <span>Status</span>
+        </Box>
+      ),
       accessor: 'status',
       Cell: ({ row }) => (
         <TextField
