@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FormControl, Select, MenuItem } from '@mui/material';
 
-const DropdownList = ({ selectedTypes, placeholder, onChange }) => {
+const DropdownList = ({ selectedTypes, placeholder, onChange, value }) => {
   const [dropdownSelectedValue, setDropdownSelectedValue] = useState('');
+
+  useEffect(() => {
+    if (value !== undefined && value !== null) {
+      setDropdownSelectedValue(value);
+    }
+  }, [value]);
 
   const handleChange = (event) => {
     const selectedValue = event.target.value;

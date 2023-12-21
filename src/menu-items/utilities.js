@@ -20,7 +20,7 @@ const utilities = {
       id: 'util-UploadReports',
       title: 'Upload Reports',
       type: 'item',
-      url: '/utils/util-UploadReports',
+      url: '/utils/util-UploadReports/:id',
       icon: icons.IconUpload,
       breadcrumbs: false
     },

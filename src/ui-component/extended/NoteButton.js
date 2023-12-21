@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IconButton, TextareaAutosize, Grid } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-const NoteButton = () => {
-  const [textareas, setTextareas] = useState(['']); 
+const NoteButton = ({ value }) => {
+  const [textareas, setTextareas] = useState(Array.isArray(value) ? value : [value]); 
 
   const addTextarea = () => {
     setTextareas([...textareas, '']);
@@ -15,16 +15,24 @@ const NoteButton = () => {
     setTextareas(updatedTextareas);
   };
 
+  useEffect(() => {
+    if (typeof value === 'string') {
+      setTextareas(value.split('\n'));
+    } else {
+      setTextareas(value || ['']);
+    }
+  }, [value]);
+
   return (
     <Grid container spacing={1} alignItems="center">
-      {textareas.map((value, index) => (
+      {textareas.map((textarea, index) => (
         <Grid item key={index}>
           <TextareaAutosize
-            style={{ minHeight: '5rem', width: '20.7rem', fontSize: '14px', border: 'none', resize: 'none' }}
+            style={{ minHeight: '5rem', width: '20.7rem', fontSize: '14px', border: 'none', resize: 'none', color: "#0B3782" }}
             aria-label="minimum height"
             minRows={1}
             placeholder="Type your note here..."
-            value={value}
+            value={textarea}
             onChange={(e) => handleTextareaChange(index, e.target.value)}
           />
         </Grid>
