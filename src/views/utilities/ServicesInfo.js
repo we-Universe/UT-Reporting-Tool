@@ -199,7 +199,7 @@ const UtilitiesServicesInfo = () => {
                   {editingRows[index] ? (
                     <SaveButton onClick={() => handleSaveClick(index)} />
                   ) : (
-                    <EditButton handleEditClick={() => handleEditClick(index)} />
+                    <EditButton onClick={() => handleEditClick(index)} />
                   )}
                 </TableCell>
               </TableRow>
