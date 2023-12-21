@@ -49,6 +49,14 @@ const utilities = {
       breadcrumbs: false
     },
     {
+      id: 'util-uploadInvoice',
+      title: 'upload Invoice Report',
+      type: 'item',
+      url: '/utils/util-uploadInvoice',
+      icon: icons.IconUpload,
+      breadcrumbs: false
+    },
+    {
       id: 'icons',
       title: 'Icons',
       type: 'collapse',
