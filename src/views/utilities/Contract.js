@@ -98,7 +98,7 @@ const UIColor = () => (
                 <CurrentDatePicker />
               </FormSection>
             </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={6}>
+            <Grid item xs={12} sm={6} md={4} lg={11}>
               <FormSection title="Notes*">
                 <NoteButton />
               </FormSection>

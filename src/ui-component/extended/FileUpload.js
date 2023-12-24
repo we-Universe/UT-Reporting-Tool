@@ -20,7 +20,7 @@ const FileUpload = ({ image, allowedExtensions }) => {
       setSelectedFile(file);
 
       if (!allowedExtensions.includes(fileExtension)) {
-        alert(`Invalid file type. Please select a file with ${allowedExtensions.join(', ')} extension.`);
+        alert(`Invalid file type. Please select a file with .${allowedExtensions.join(', ')} extension.`);
         fileInputRef.current.value = '';
         setSelectedFile(null);
         return;

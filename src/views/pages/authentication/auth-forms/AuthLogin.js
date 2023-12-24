@@ -112,7 +112,7 @@ const FirebaseLogin = ({ ...others }) => {
               values
             );
             //please remove it !!
-            window.location.href = '/main/dashboard/default'
+            window.location.href = '/main/dashboard/merchantreports';
       
             if (response.status === 200) {
               console.log(response);
@@ -128,9 +128,9 @@ const FirebaseLogin = ({ ...others }) => {
               });
               localStorage.setItem('accessToken', response.data.accessToken);
               localStorage.setItem('userRole', response.data.userRole);
-              setTimeout(() => {
-                window.location.href = '/main/dashboard/default'
-              }, 2000);
+              // setTimeout(() => {
+              //   window.location.href = '/main/dashboard/default'
+              // }, 2000);
 
             }
           } catch (error) {

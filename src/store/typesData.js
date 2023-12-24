@@ -7,5 +7,15 @@ export const reportTypes = [
     'PUSH',
     'PULL',
     'RBT',
-    'DCB',
+    'DCB'
+];
+
+export const merchantName = [
+    'hi',
+    'hello'
+];
+
+export const roles = [
+    'hi',
+    'hello'
 ];
