@@ -7,9 +7,11 @@ import { selectedTypes, reportTypes } from 'store/typesData';
 import CurrentDatePicker from 'ui-component/extended/CurrentDatePicker';
 import NoteButton from 'ui-component/extended/NoteButton';
 import FileUpload from 'ui-component/extended/FileUpload';
-import UploadFile from 'assets/images/icons/doc.png';
+import UploadFile from 'assets/images/icons/report.png';
 import ImiFile from 'assets/images/icons/imi.svg';
 import RefundFile from 'assets/images/icons/refundfile.png';
+import DifferenciesFile from 'assets/images/icons/testing.png';
+import MWFile from 'assets/images/icons/media-world.png';
 import SubCard from 'ui-component/cards/SubCard';
 import { useParams } from 'react-router-dom';
 
@@ -84,18 +86,25 @@ const Form = () => {
               </FormSection>
 
               {/* Date */}
-              <FormSection title="Date">
-                <CurrentDatePicker />
-              </FormSection>
+              {id == ":id" &&
+                <FormSection title="Date">
+                  <CurrentDatePicker />
+                </FormSection>
+              }
 
               {/* Refund File */}
               <FormSection title="Refund File">
                 <FileUpload image={RefundFile} allowedExtensions={['xlsx']} />
               </FormSection>
 
-              {/* Notes */}
-              <FormSection title="Notes*">
-                <NoteButton value={rowData ? rowData.notes : ''} />
+              {/* Differencies File */}
+              <FormSection title="Differencies File">
+                <FileUpload image={DifferenciesFile} allowedExtensions={['xlsx']} />
+              </FormSection>
+
+              {/* MW File */}
+              <FormSection title="MW File">
+                <FileUpload image={MWFile} allowedExtensions={['xlsx']} />
               </FormSection>
 
               {/* Approved */}
@@ -105,6 +114,11 @@ const Form = () => {
                   checked={approved}
                   onChange={(e) => setApproved(e.target.checked)}
                 />
+              </FormSection>
+
+              {/* Notes */}
+              <FormSection title="Notes*">
+                <NoteButton value={rowData ? rowData.notes : ''} />
               </FormSection>
 
               {/* Save Button */}

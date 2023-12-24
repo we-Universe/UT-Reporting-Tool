@@ -12,9 +12,9 @@ const other = {
   children: [
     {
       id: 'sample-page',
-      title: 'Sample Page',
+      title: 'Add User',
       type: 'item',
-      url: '/sample-page',
+      url: '/adduser-page',
       icon: icons.IconBrandChrome,
       breadcrumbs: false
     },
