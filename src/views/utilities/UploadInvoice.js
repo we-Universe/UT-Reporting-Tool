@@ -43,10 +43,13 @@ const UploadInvoice = () => {
     telecomName: '',
     billingDate: '',
     status: '',
-    invoiceDate: '',
+    invoiceYear: '',
+    invoiceMonth: '',
     totalAmount: '',
     paymentDate: '',
-    invoiceFile: ''
+    invoiceFile: '',
+    swiftFile: '',
+    receiptFile: ''
   });
 
   const handleInvoiceSubmit = () => {
@@ -93,7 +96,19 @@ const UploadInvoice = () => {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DesktopDatePicker
                 value={invoiceReportInfo.invoiceDate ? dayjs(invoiceReportInfo.invoiceDate) : null}
-                onChange={(date) => setInvoiceReportInfo({ ...invoiceReportInfo, invoiceDate: date.format() })}
+                // onChange={(date) => setInvoiceReportInfo({ ...invoiceReportInfo, invoiceDate: date.format() })}
+                onChange={(date) => {
+                  if (date) {
+                    const selectedMonth = date.month() + 1; // months are zero-indexed
+                    const selectedYear = date.year();
+
+                    setInvoiceReportInfo({
+                      ...invoiceReportInfo,
+                      invoiceMonth: selectedMonth,
+                      invoiceYear: selectedYear
+                    });
+                  }
+                }}
                 renderInput={(params) => <TextField {...params} />}
                 sx={{ width: '100%', marginBottom: '20px' }}
               />
@@ -115,7 +130,7 @@ const UploadInvoice = () => {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DesktopDatePicker
                 value={invoiceReportInfo.paymentDate ? dayjs(invoiceReportInfo.paymentDate) : null}
-                onChange={(date) => setInvoiceReportInfo({ ...invoiceReportInfo, paymentDate: date })}
+                onChange={(date) => setInvoiceReportInfo({ ...invoiceReportInfo, paymentDate: date.format() })}
                 renderInput={(params) => <TextField {...params} />}
                 sx={{ width: '100%', marginBottom: '20px' }}
               />
