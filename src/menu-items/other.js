@@ -1,8 +1,8 @@
 // assets
-import { IconBrandChrome, IconHelp } from '@tabler/icons';
+import { IconUser, IconHelp } from '@tabler/icons';
 
 // constant
-const icons = { IconBrandChrome, IconHelp };
+const icons = { IconUser, IconHelp };
 
 // ==============================|| SAMPLE PAGE & DOCUMENTATION MENU ITEMS ||============================== //
 
@@ -15,7 +15,7 @@ const other = {
       title: 'Add User',
       type: 'item',
       url: '/adduser-page',
-      icon: icons.IconBrandChrome,
+      icon: icons.IconUser,
       breadcrumbs: false
     },
     {
