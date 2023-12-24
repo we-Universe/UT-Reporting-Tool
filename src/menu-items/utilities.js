@@ -50,7 +50,7 @@ const utilities = {
     },
     {
       id: 'util-uploadInvoice',
-      title: 'upload Invoice Report',
+      title: 'Upload Invoice Report',
       type: 'item',
       url: '/utils/util-uploadInvoice',
       icon: icons.IconUpload,

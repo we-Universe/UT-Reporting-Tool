@@ -46,61 +46,40 @@ const AddUserPage = () => {
   return (
     <MainCard>
       <Typography variant="h4" sx={{ display: 'flex', alignItems: 'center' }}>
-        <img
-          src={StatusImage}
-          alt="User Status"
-          style={{ marginRight: '8px', width: '24px', height: '24px' }}
-        />
+        <img src={StatusImage} alt="User Status" style={{ marginRight: '8px', width: '24px', height: '24px' }} />
         Add User
       </Typography>
       <pre>
         <h4>Name</h4>
-        <input
-          type="text"
-          id="userPhone"
-          onChange={(e) => validatePhone(e)}
-        />
+        <input type="text" id="userPhone" onChange={(e) => validatePhone(e)} />
         <br />
         <span style={{ fontWeight: 'bold', color: 'red' }}>{phoneError}</span>
       </pre>
 
       <pre>
         <h4>Email</h4>
-        <input
-          type="text"
-          id="userEmail"
-          onChange={(e) => validateEmail(e)}
-        />
+        <input type="text" id="userEmail" onChange={(e) => validateEmail(e)} />
         <br />
         <span style={{ fontWeight: 'bold', color: 'red' }}>{emailError}</span>
       </pre>
 
       <pre>
         <h4>Phone Number</h4>
-        <input
-          type="text"
-          id="userPhone"
-          onChange={(e) => validatePhone(e)}
-        />
+        <input type="text" id="userPhone" onChange={(e) => validatePhone(e)} />
         <br />
         <span style={{ fontWeight: 'bold', color: 'red' }}>{phoneError}</span>
       </pre>
 
       <pre>
         <h4>Role</h4>
-        <DropdownList
-          selectedTypes={roles}
-          placeholder={'Choose role'}
-          value={selectedRole}
-          onChange={handleRoleDropdownChange}
-        />
+        <DropdownList selectedTypes={roles} placeholder={'Choose role'} value={selectedRole} onChange={handleRoleDropdownChange} />
         <br />
         <span style={{ fontWeight: 'bold', color: 'red' }}>{phoneError}</span>
       </pre>
 
       <pre>
         <h4>Active User</h4>
-       
+
         <span style={{ fontWeight: 'bold', color: 'red' }}>{phoneError}</span>
       </pre>
     </MainCard>

@@ -49,7 +49,7 @@ const FileUpload = ({ image, allowedExtensions }) => {
 
 FileUpload.propTypes = {
   image: PropTypes.string.isRequired,
-  allowedExtensions: PropTypes.arrayOf(PropTypes.string).isRequired,
+  allowedExtensions: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 export default FileUpload;
