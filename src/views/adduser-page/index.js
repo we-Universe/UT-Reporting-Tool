@@ -34,6 +34,8 @@ const AddUserPage = () => {
   const [checkk, setCheckk] = useState(false);
   const [phone, setPhone] = useState("");
   const [phoneError, setPhoneError] = useState("");
+  const [roleError, setRoleError] = useState("");
+  const [countryError, setCountryError] = useState("");
 
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
@@ -57,10 +59,12 @@ const AddUserPage = () => {
   };
 
   const handleRoleDropdownChange = (value) => {
+    setRoleError("");
     setSelectedRole(value);
   };
 
   const handleCountryDropdownChange = (value) => {
+    setCountryError("");
     setSelectedCountry(value);
   };
 
@@ -89,11 +93,23 @@ const AddUserPage = () => {
     } else {
       setPhoneError("");
     }
+    if (!selectedRole) {
+      setRoleError("Please select a role");
+      hasError = true;
+    } else {
+      setRoleError("");
+    }
+    if (!selectedCountry) {
+      setCountryError("Please select a country");
+      hasError = true;
+    } else {
+      setCountryError("");
+    }
+
     if (
-      !isChecked &&
-      /^\d{10,12}$/.test(newPhone) &&
-      /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(newEmail) &&
-      /^[A-Za-z\s]+$/.test(newName)
+      (/^\d{10,12}$/.test(newPhone)) &&
+      (/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(newEmail)) &&
+      (/^[A-Za-z\s]+$/.test(newName)) && (!selectedRole) && (!selectedCountry)
     ) {
       setTimeout(() => {
         setCheckk(false);
@@ -104,15 +120,13 @@ const AddUserPage = () => {
     if (!hasError) {
       /////////////////////////////////////////action to be done////////////////////////////////////
       if (
-        isChecked &&
-        /^\d{10,12}$/.test(newPhone) &&
-        /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(newEmail) &&
-        /^[A-Za-z\s]+$/.test(newName)
+        (/^\d{10,12}$/.test(newPhone)) &&
+        (/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(newEmail)) &&
+        (/^[A-Za-z\s]+$/.test(newName)) && (selectedRole) && (selectedCountry)
       ) {
         setFName("");
         setEmail("");
         setPhone("");
-        setIsChecked(false);
         setSubscribe(true);
         setTimeout(() => {
           setSubscribe(false);
@@ -142,11 +156,20 @@ const AddUserPage = () => {
             variant="outlined"
             placeholder="Enter name"
             name="name"
-            error={Boolean(nameError)}
-            helperText={nameError}
             onChange={handleNameChange}
             value={fName}
           />
+          {nameError && (
+            <Box
+              sx={{
+                color: '#d32f2f',
+                fontSize: '0.78rem',
+                marginTop: '8px'
+              }}
+            >
+              {nameError}
+            </Box>
+          )}
         </Box>
         <Box marginBottom={2}>
           <InputLabel htmlFor="email" sx={{ color: '#0B3782', marginBottom: 1 }}>
@@ -158,12 +181,21 @@ const AddUserPage = () => {
             variant="outlined"
             placeholder="Your Email"
             name="email"
-            error={Boolean(emailError)}
-            helperText={emailError}
             onChange={handleEmailChange}
             value={email}
             type="email"
           />
+          {emailError && (
+            <Box
+              sx={{
+                color: '#d32f2f',
+                fontSize: '0.78rem',
+                marginTop: '8px'
+              }}
+            >
+              {emailError}
+            </Box>
+          )}
         </Box>
         <Box marginBottom={2}>
           <InputLabel htmlFor="phone" sx={{ color: '#0B3782', marginBottom: 1 }}>
@@ -178,7 +210,6 @@ const AddUserPage = () => {
             onChange={handlePhoneChange}
             inputProps={{
               name: 'phone',
-              // required: true,
               autoFocus: true,
             }}
           />
@@ -187,8 +218,7 @@ const AddUserPage = () => {
               sx={{
                 color: '#d32f2f',
                 fontSize: '0.78rem',
-                marginTop: '8px',
-                marginLeft: '16px',
+                marginTop: '8px'
               }}
             >
               {phoneError}
@@ -196,28 +226,54 @@ const AddUserPage = () => {
           )}
         </Box>
         <Box marginBottom={2}>
-          <Box sx={{ display: "flex", gap: "150px" }}>
-            <InputLabel htmlFor="role" sx={{ color: '#0B3782', marginBottom: 1 }}>
-              Role
-            </InputLabel>
-            <InputLabel htmlFor="country" sx={{ color: '#0B3782', marginBottom: 1 }}>
-              Country
-            </InputLabel>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            <Box>
+              <InputLabel htmlFor="role" sx={{ color: '#0B3782', marginBottom: 1 }}>
+                Role
+              </InputLabel>
+              <DropdownList
+                selectedTypes={roles}
+                placeholder={'Choose Role'}
+                value={selectedRole}
+                onChange={handleRoleDropdownChange}
+                sx={{ width: "200px" }}
+              />
+            </Box>
+            {roleError && (
+              <Box
+                sx={{
+                  color: '#d32f2f',
+                  fontSize: '0.78rem',
+                  marginTop: '-14px'
+                }}
+              >
+                {roleError}
+              </Box>
+            )}
+            <Box>
+              <InputLabel htmlFor="country" sx={{ color: '#0B3782', marginBottom: 1 }}>
+                Country
+              </InputLabel>
+              <DropdownList
+                selectedTypes={roles}
+                placeholder={'Choose Country'}
+                value={selectedCountry}
+                onChange={handleCountryDropdownChange}
+                sx={{ width: "200px" }}
+              />
+            </Box>
           </Box>
-          <Box sx={{ display: "flex", gap: "50px" }}>
-            <DropdownList
-              selectedTypes={roles}
-              placeholder={'Choose Role'}
-              value={selectedRole}
-              onChange={handleRoleDropdownChange}
-            />
-            <DropdownList
-              selectedTypes={roles}
-              placeholder={'Choose Country'}
-              value={selectedCountry}
-              onChange={handleCountryDropdownChange}
-            />
-          </Box>
+          {countryError && (
+            <Box
+              sx={{
+                color: '#d32f2f',
+                fontSize: '0.78rem',
+                marginTop: '8px'
+              }}
+            >
+              {countryError}
+            </Box>
+          )}
           <Box sx={{ display: "flex", gap: "5px", marginTop: "2rem" }}>
             <Checkbox
               checked={isChecked}
