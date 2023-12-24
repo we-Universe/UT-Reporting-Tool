@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import config from '../../../../config';
+import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -15,11 +14,8 @@ import {
   FormControl,
   FormHelperText,
   Grid,
-  IconButton,
-  InputAdornment,
   InputLabel,
   OutlinedInput,
-  Stack,
   Typography,
 } from '@mui/material';
 
@@ -30,29 +26,11 @@ import { Formik } from 'formik';
 // project imports
 import AnimateButton from 'ui-component/extended/AnimateButton';
 
-// assets
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-
-// ============================|| FIREBASE - LOGIN ||============================ //
 const apiUrl = config.reportingAPIUrls.url;
-const FirebaseLogin = ({ ...others }) => {
-  const navigate = useNavigate();
+const AuthForgotPassword = ({ ...others }) => {
   const theme = useTheme();
   const customization = useSelector((state) => state.customization);
-
-
-  const [showPassword, setShowPassword] = useState(false);
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-  const handleForgotPasswordClick = () => {
-    navigate("/forgotpassword");
-  };
-
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
+  const navigate = useNavigate();
 
   return (
     <>
@@ -91,32 +69,33 @@ const FirebaseLogin = ({ ...others }) => {
         </Grid>
         <Grid item xs={12} container alignItems="center" justifyContent="center">
           <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle1">Sign in</Typography>
+            <Typography variant="subtitle1">Forgot Password</Typography>
+          </Box>
+        </Grid>
+
+        <Grid item xs={12} container alignItems="center" justifyContent="center">
+          <Box sx={{ mb: 2 }}>
+            <Typography sx={{ color: 'rgba(0, 0, 0, 0.5)' }} variant="subtitle1">Kindly provide the email address associated with your registration.</Typography >
           </Box>
         </Grid>
       </Grid>
 
       <Formik
         initialValues={{
-          username: '',
-          password: ''
+          email: ''
         }}
         validationSchema={Yup.object().shape({
-          username: Yup.string().max(255).required('Username is required'),
-          password: Yup.string().max(255).required('Password is required')
+          email: Yup.string().max(255).required('Email is required').email(),
         })}
         onSubmit={async (values) => {
           try {
             const response = await axios.post(
-              `${apiUrl}/api/Authentication/Login`,
+              `${apiUrl}/api/Authentication/ForgetPassword`,
               values
             );
-            //please remove it !!
-            window.location.href = '/main/dashboard/merchantreports';
       
             if (response.status === 200) {
-              console.log(response);
-              toast.success("Login successfully", {
+              toast.success("Please check your email", {
                 position: "bottom-right",
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -126,11 +105,9 @@ const FirebaseLogin = ({ ...others }) => {
                 progress: undefined,
                 theme: "colored",
               });
-              localStorage.setItem('accessToken', response.data.accessToken);
-              localStorage.setItem('userRole', response.data.userRole);
-              // setTimeout(() => {
-              //   window.location.href = '/main/dashboard/default'
-              // }, 2000);
+              setTimeout(() => {
+                navigate("/");
+              }, 3000);
 
             }
           } catch (error) {
@@ -164,61 +141,24 @@ const FirebaseLogin = ({ ...others }) => {
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
-            <FormControl fullWidth error={Boolean(touched.username && errors.username)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-username-login">Username</InputLabel>
+            <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
+              <InputLabel htmlFor="outlined-adornment-email-login">Email</InputLabel>
               <OutlinedInput
-                id="outlined-adornment-username-login"
-                type="text"
-                value={values.username}
-                name="username"
+                id="outlined-adornment-email-login"
+                type="email"
+                value={values.email}
+                name="email"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                label="Username"
+                label="Email"
                 inputProps={{}}
               />
-              {touched.username && errors.username && (
-                <FormHelperText error id="standard-weight-helper-text-username-login">
-                  {errors.username}
+              {touched.email && errors.email && (
+                <FormHelperText error id="standard-weight-helper-text-email-login">
+                  {errors.email}
                 </FormHelperText>
               )}
             </FormControl>
-
-            <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-password-login">Password</InputLabel>
-              <OutlinedInput
-                id="outlined-adornment-password-login"
-                type={showPassword ? 'text' : 'password'}
-                value={values.password}
-                name="password"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                      size="large"
-                    >
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-                inputProps={{}}
-              />
-              {touched.password && errors.password && (
-                <FormHelperText error id="standard-weight-helper-text-password-login">
-                  {errors.password}
-                </FormHelperText>
-              )}
-            </FormControl>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-              <Typography variant="subtitle1" color="secondary" sx={{ textDecoration: 'none', cursor: 'pointer' }} onClick={handleForgotPasswordClick}>
-                Forgot Password?
-              </Typography>
-            </Stack>
             {errors.submit && (
               <Box sx={{ mt: 3 }}>
                 <FormHelperText error>{errors.submit}</FormHelperText>
@@ -228,7 +168,7 @@ const FirebaseLogin = ({ ...others }) => {
             <Box sx={{ mt: 2 }}>
               <AnimateButton>
                 <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="secondary">
-                  Sign in
+                  Send Password
                 </Button>
               </AnimateButton>
             </Box>
@@ -240,4 +180,4 @@ const FirebaseLogin = ({ ...others }) => {
   );
 };
 
-export default FirebaseLogin;
+export default AuthForgotPassword;

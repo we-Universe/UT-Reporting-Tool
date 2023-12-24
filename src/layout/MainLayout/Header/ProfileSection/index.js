@@ -58,7 +58,7 @@ const ProfileSection = () => {
   const handleLogout = async () => {
     localStorage.clear();
     setTimeout(() => {
-      window.location.href = '/main/pages/login/login3'
+      window.location.href = '/main'
     }, 2000);
   };
 

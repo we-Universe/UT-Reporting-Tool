@@ -1,0 +1,18 @@
+/* 
+        AddUser.module.css 
+*/
+
+.customPhoneInput::placeholder {
+    font-family: 'Prelia' !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    line-height: 18px !important;
+    letter-spacing: 0em !important;
+    text-align: left !important;
+    color: #8eaeed !important;
+}
+
+.customPhoneInput {
+    width: 20rem !important;
+    height: 55px !important;
+}
