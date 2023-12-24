@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 // material-ui
 import { Box, Typography } from '@mui/material';
 
-const FileUpload = ({ image, allowedExtensions }) => {
+const FileUpload = ({ image, allowedExtensions, onUpload }) => {
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -24,6 +24,9 @@ const FileUpload = ({ image, allowedExtensions }) => {
         fileInputRef.current.value = '';
         setSelectedFile(null);
         return;
+      }
+      if (onUpload) {
+        onUpload(file);
       }
     }
   };
@@ -49,7 +52,8 @@ const FileUpload = ({ image, allowedExtensions }) => {
 
 FileUpload.propTypes = {
   image: PropTypes.string.isRequired,
-  allowedExtensions: PropTypes.arrayOf(PropTypes.string).isRequired
+  allowedExtensions: PropTypes.arrayOf(PropTypes.string).isRequired,
+  onUpload: PropTypes.func
 };
 
 export default FileUpload;
