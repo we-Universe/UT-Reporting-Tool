@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Grid, Typography, Button, Checkbox } from '@mui/material';
+import { Grid, Typography, Button, Checkbox, Box } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import DropdownList from 'ui-component/extended/DropdownList';
@@ -50,9 +50,90 @@ const Form = () => {
   ], []);
 
   rowData = data.find((item) => item.id === Number(id)) || {};
-  const [approved, setApproved] = useState(rowData ? rowData.approved : false);
 
-  //let date = rowData.lastModified;
+  const [approved, setApproved] = useState(rowData ? (rowData.approved == 1) ? true : false : false);
+  const [selectedTelecom, setSelectedTelecom] = useState(rowData ? rowData.telecomName : '');
+  const [selectedReport, setSelectedReport] = useState(rowData ? rowData.type : '');
+  const [telecomError, setTelecomError] = useState("");
+  const [reportError, setReportError] = useState("");
+  const [reportFile, setReportFile] = useState(rowData ? rowData.file : null);
+  const [imiReportFile, setImiReportFile] = useState(rowData ? rowData.file : null);
+  const [diffrenciesReportFile, setDiffrenciesReportFile] = useState(rowData ? rowData.file : null);
+  const [mwReportFile, setMwReportFile] = useState(rowData ? rowData.file : null);
+  const [refundReportFile, setRefundReportFile] = useState(rowData ? rowData.file : null);
+  const [reportFileError, setReportFileError] = useState("");
+  const [selectedDateState, setSelectedDateState] = useState(new Date());
+
+  const handleDateChange = (dateInfo) => {
+    setSelectedDateState(dateInfo);
+  };
+
+  const handleCheckboxChange = (event) => {
+    setApproved(event.target.checked);
+  };
+
+  const handleFileUpload = (file) => {
+    setReportFile(file);
+  };
+
+  const handleImiFileUpload = (file) => {
+    setImiReportFile(file);
+  };
+
+  const handleMwFileUpload = (file) => {
+    setMwReportFile(file);
+  };
+
+  const handleRefundFileUpload = (file) => {
+    setRefundReportFile(file);
+  };
+
+  const handleDiffrenciesFileUpload = (file) => {
+    setDiffrenciesReportFile(file);
+  };
+
+  const handleTelecomDropdownChange = (value) => {
+    setTelecomError("");
+    setSelectedTelecom(value);
+  };
+
+  const handleReportDropdownChange = (value) => {
+    setReportError("");
+    setSelectedReport(value);
+  };
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    let hasError = false;
+    const dateString = selectedDateState.toISOString().split('T')[0];
+    const [year, month] = dateString.split('-').map(Number);
+    console.log('jjjj', reportFile, selectedReport, approved, selectedTelecom, year, month, imiReportFile, diffrenciesReportFile, mwReportFile, refundReportFile);
+
+    if (!selectedTelecom) {
+      setTelecomError("Please select a telecom name");
+      hasError = true;
+    } else {
+      setTelecomError("");
+    }
+    if (!reportError) {
+      setReportError("Please select a report type");
+      hasError = true;
+    } else {
+      setReportError("");
+    }
+    if (reportFile == null) {
+      setReportFileError("Please select a report file");
+      hasError = true;
+    } else {
+      setReportFileError("");
+    }
+
+    if (!hasError) {
+      setSelectedTelecom('');
+      setSelectedReport('');
+      setReportFile(null);
+    }
+  };
 
   return (
     <MainCard title="Upload Reports">
@@ -63,48 +144,99 @@ const Form = () => {
 
               {/* Telecom Name */}
               <FormSection title="Telecom Name">
-                <DropdownList
-                  selectedTypes={selectedTypes}
-                  placeholder={'Choose telecom name'}
-                  value={rowData ? rowData.telecomName : ''}
-                />
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  {telecomError && (
+                    <Box
+                      sx={{
+                        color: '#d32f2f',
+                        fontSize: '0.78rem',
+                        marginBottom: '8px'
+                      }}
+                    >
+                      {telecomError}
+                    </Box>
+                  )}
+                  <Box sx={{ width: "fit-content" }}>
+                    <DropdownList
+                      selectedTypes={selectedTypes}
+                      placeholder={'Choose telecom name'}
+                      value={rowData ? rowData.telecomName : selectedTelecom}
+                      onChange={handleTelecomDropdownChange}
+                    />
+                  </Box>
+                </Box>
               </FormSection>
 
               {/* Report File */}
               <FormSection title="Report File">
-                <FileUpload image={UploadFile} allowedExtensions={['xlsx']} />
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  {reportFileError && (
+                    <Box
+                      sx={{
+                        color: '#d32f2f',
+                        fontSize: '0.78rem',
+                        marginBottom: '8px'
+                      }}
+                    >
+                      {reportFileError}
+                    </Box>
+                  )}
+                  <Box sx={{ width: "fit-content" }}>
+                    <FileUpload image={UploadFile} allowedExtensions={['xlsx']} onUpload={handleFileUpload} />
+                  </Box>
+                </Box>
               </FormSection>
 
               {/* Report Type */}
               <FormSection title="Report Type">
-                <DropdownList selectedTypes={reportTypes} placeholder={'Choose report type'} value={rowData ? rowData.type : ''} />
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  {reportError && (
+                    <Box
+                      sx={{
+                        color: '#d32f2f',
+                        fontSize: '0.78rem',
+                        marginBottom: '8px'
+                      }}
+                    >
+                      {reportError}
+                    </Box>
+                  )}
+                  <Box sx={{ width: "fit-content" }}>
+                    <DropdownList
+                      selectedTypes={reportTypes}
+                      placeholder={'Choose report type'}
+                      value={rowData ? rowData.type : selectedReport}
+                      onChange={handleReportDropdownChange}
+                    />
+                  </Box>
+                </Box>
               </FormSection>
 
               {/* IMI File */}
               <FormSection title="IMI File">
-                <FileUpload image={ImiFile} allowedExtensions={['xlsx']} />
+                <FileUpload image={ImiFile} allowedExtensions={['xlsx']} onUpload={handleImiFileUpload} />
               </FormSection>
 
               {/* Date */}
               {id == ":id" &&
                 <FormSection title="Date">
-                  <CurrentDatePicker />
+                  <CurrentDatePicker onDateChange={handleDateChange} />
                 </FormSection>
               }
 
               {/* Refund File */}
               <FormSection title="Refund File">
-                <FileUpload image={RefundFile} allowedExtensions={['xlsx']} />
+                <FileUpload image={RefundFile} allowedExtensions={['xlsx']} onUpload={handleRefundFileUpload} />
               </FormSection>
 
               {/* Differencies File */}
               <FormSection title="Differencies File">
-                <FileUpload image={DifferenciesFile} allowedExtensions={['xlsx']} />
+                <FileUpload image={DifferenciesFile} allowedExtensions={['xlsx']} onUpload={handleDiffrenciesFileUpload} />
               </FormSection>
 
               {/* MW File */}
               <FormSection title="MW File">
-                <FileUpload image={MWFile} allowedExtensions={['xlsx']} />
+                <FileUpload image={MWFile} allowedExtensions={['xlsx']} onUpload={handleMwFileUpload} />
               </FormSection>
 
               {/* Approved */}
@@ -112,7 +244,7 @@ const Form = () => {
                 <Checkbox
                   style={{ color: "#008b78", paddingLeft: "0" }}
                   checked={approved}
-                  onChange={(e) => setApproved(e.target.checked)}
+                  onChange={handleCheckboxChange}
                 />
               </FormSection>
 
@@ -135,6 +267,7 @@ const Form = () => {
                       backgroundColor: "#0B3782",
                     },
                   }}
+                  onClick={onSubmit}
                 >
                   {id !== ":id" ? "Edit Report" : "Save Report"}
                 </Button>

@@ -12,6 +12,7 @@ const UtilsColor = Loadable(lazy(() => import('views/utilities/Contract')));
 const UtilsServiceInfo = Loadable(lazy(() => import('views/utilities/ServicesInfo')));
 const UtilsMerchantInfo = Loadable(lazy(() => import('views/utilities/MerchantInfo')));
 const UtilsMaterialIcons = Loadable(lazy(() => import('views/utilities/MaterialIcons')));
+const UtilsUploadInvoice = Loadable(lazy(() => import('views/utilities/UploadInvoice')));
 const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons')));
 const AddUserPage = Loadable(lazy(() => import('views/adduser-page')));
 
@@ -77,6 +78,15 @@ const MainRoutes = {
         {
           path: 'util-merchantInfo',
           element: <UtilsMerchantInfo />
+        }
+      ]
+    },
+    {
+      path: 'utils',
+      children: [
+        {
+          path: 'util-uploadInvoice',
+          element: <UtilsUploadInvoice />
         }
       ]
     },

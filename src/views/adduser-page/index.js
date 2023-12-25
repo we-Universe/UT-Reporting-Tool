@@ -88,28 +88,28 @@ const AddUserPage = () => {
   
   const handleNameChange = (event) => {
     const newName = event.target.value;
-    setNameError("");
+    setNameError('');
     setFName(newName);
   };
 
   const handleEmailChange = (event) => {
     const newEmail = event.target.value;
-    setEmailError("");
+    setEmailError('');
     setEmail(newEmail);
   };
 
   const handlePhoneChange = (value) => {
-    setPhoneError("");
+    setPhoneError('');
     setPhone(value);
   };
 
   const handleRoleDropdownChange = (value) => {
-    setRoleError("");
+    setRoleError('');
     setSelectedRole(value);
   };
 
   const handleCountryDropdownChange = (value) => {
-    setCountryError("");
+    setCountryError('');
     setSelectedCountry(value);
   };
 
@@ -121,16 +121,16 @@ const AddUserPage = () => {
     let hasError = false;
 
     if (!/^[A-Za-z\s]+$/.test(newName)) {
-      setNameError("Only letters are allowed");
+      setNameError('Only letters are allowed');
       hasError = true;
     } else {
-      setNameError("");
+      setNameError('');
     }
     if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(newEmail)) {
-      setEmailError("Please enter a valid email address");
+      setEmailError('Please enter a valid email address');
       hasError = true;
     } else {
-      setEmailError("");
+      setEmailError('');
     }
     if (newPhone.trim() === "") {
       setPhoneError("");
@@ -138,25 +138,27 @@ const AddUserPage = () => {
       setPhoneError("Please enter a valid phone number");
       hasError = true;
     } else {
-      setPhoneError("");
+      setPhoneError('');
     }
     if (!selectedRole) {
-      setRoleError("Please select a role");
+      setRoleError('Please select a role');
       hasError = true;
     } else {
-      setRoleError("");
+      setRoleError('');
     }
     if (!selectedCountry) {
-      setCountryError("Please select a country");
+      setCountryError('Please select a country');
       hasError = true;
     } else {
-      setCountryError("");
+      setCountryError('');
     }
 
     if (
-      (/^\d{10,12}$/.test(newPhone)) &&
-      (/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(newEmail)) &&
-      (/^[A-Za-z\s]+$/.test(newName)) && (!selectedRole) && (!selectedCountry)
+      /^\d{10,12}$/.test(newPhone) &&
+      /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(newEmail) &&
+      /^[A-Za-z\s]+$/.test(newName) &&
+      !selectedRole &&
+      !selectedCountry
     ) {
       setTimeout(() => {
         setCheckk(false);
@@ -168,9 +170,11 @@ const AddUserPage = () => {
       setLoading(true);
       /////////////////////////////////////////action to be done////////////////////////////////////
       if (
-        (/^\d{10,12}$/.test(newPhone)) &&
-        (/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(newEmail)) &&
-        (/^[A-Za-z\s]+$/.test(newName)) && (selectedRole) && (selectedCountry)
+        /^\d{10,12}$/.test(newPhone) &&
+        /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(newEmail) &&
+        /^[A-Za-z\s]+$/.test(newName) &&
+        selectedRole &&
+        selectedCountry
       ) {
         setFName("");
         setEmail("");
@@ -236,11 +240,7 @@ const AddUserPage = () => {
   return (
     <MainCard sx={{ padding: 4, boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)' }}>
       <Typography variant="h3" sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
-        <img
-          src={StatusImage}
-          alt="User Status"
-          style={{ marginRight: '8px', width: '24px', height: '24px' }}
-        />
+        <img src={StatusImage} alt="User Status" style={{ marginRight: '8px', width: '24px', height: '24px' }} />
         Add User
       </Typography>
       <form onSubmit={onSubmit} action="request-demo" method="POST">
@@ -249,7 +249,7 @@ const AddUserPage = () => {
             Username
           </InputLabel>
           <TextField
-            sx={{ bgcolor: '#F5F5F5', borderRadius: '4px', width: "20rem" }}
+            sx={{ bgcolor: '#F5F5F5', borderRadius: '4px', width: '20rem' }}
             id="name"
             variant="outlined"
             placeholder="Enter a username"
@@ -274,7 +274,7 @@ const AddUserPage = () => {
             Email
           </InputLabel>
           <TextField
-            sx={{ bgcolor: '#F5F5F5', borderRadius: '4px', width: "20rem" }}
+            sx={{ bgcolor: '#F5F5F5', borderRadius: '4px', width: '20rem' }}
             id="email"
             variant="outlined"
             placeholder="Your Email"
@@ -308,7 +308,7 @@ const AddUserPage = () => {
             onChange={handlePhoneChange}
             inputProps={{
               name: 'phone',
-              autoFocus: true,
+              autoFocus: true
             }}
           />
           {phoneError && (
@@ -324,7 +324,7 @@ const AddUserPage = () => {
           )}
         </Box>
         <Box marginBottom={2}>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <Box>
               <InputLabel htmlFor="role" sx={{ color: '#0B3782', marginBottom: 1 }}>
                 Role
@@ -334,7 +334,7 @@ const AddUserPage = () => {
                 placeholder={'Choose Role'}
                 value={selectedRole}
                 onChange={handleRoleDropdownChange}
-                sx={{ width: "200px" }}
+                sx={{ width: '200px' }}
               />
             </Box>
             {roleError && (
@@ -357,7 +357,7 @@ const AddUserPage = () => {
                 placeholder={'Choose Country'}
                 value={selectedCountry}
                 onChange={handleCountryDropdownChange}
-                sx={{ width: "200px" }}
+                sx={{ width: '200px' }}
               />
             </Box>
           </Box>
@@ -379,7 +379,7 @@ const AddUserPage = () => {
         <Box marginBottom={2}>
           {loading && <CircularProgress />}
         </Box>
-        <Button type="submit" variant="contained" color="primary" sx={{ width: "10rem", backgroundColor: '#0B3782', marginTop: "2rem" }}>
+        <Button type="submit" variant="contained" color="primary" sx={{ width: '10rem', backgroundColor: '#0B3782', marginTop: '2rem' }}>
           Submit
         </Button>
       </form>
