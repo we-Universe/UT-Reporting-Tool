@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import styles from "./AddUser.module.css";
+import config from '../../config';
+import { toast, ToastContainer } from "react-toastify";
+import CircularProgress from '@mui/material/CircularProgress';
+import axios from 'axios';
 
 // material-ui
 import {
@@ -10,25 +14,23 @@ import {
   TextField,
   Alert,
   Typography,
-  Button,
-  Checkbox
+  Button
 } from "@mui/material";
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import StatusImage from 'assets/images/icons/icons-user.gif';
 import DropdownList from 'ui-component/extended/DropdownList';
-import { roles } from 'store/typesData';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const AddUserPage = () => {
   const [fName, setFName] = useState("");
   const [nameError, setNameError] = useState("");
-  const [subscribe, setSubscribe] = useState(false);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [isChecked, setIsChecked] = useState(true);
+  const [roles, setRoles] = useState([]);
+  const [countries, setCountries] = useState([]);
   const [selectedRole, setSelectedRole] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('');
   const [checkk, setCheckk] = useState(false);
@@ -36,11 +38,54 @@ const AddUserPage = () => {
   const [phoneError, setPhoneError] = useState("");
   const [roleError, setRoleError] = useState("");
   const [countryError, setCountryError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const apiUrl = config.reportingAPIUrls.url;
 
-  const handleCheckboxChange = (event) => {
-    setIsChecked(event.target.checked);
-  };
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/Authentication/GetAllRoles`);
+        setRoles(response.data);
+      } catch (error) {
+        toast.error("There is an error while getting roles", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      }
+    };
 
+    fetchRoles();
+  }, []);
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/Countries/GetAllCountries`);
+        setCountries(response.data);
+        setSelectedCountry("Palestine")
+      } catch (error) {
+        toast.error("There is an error while getting countries", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      }
+    };
+
+    fetchCountries();
+  }, []);
+  
   const handleNameChange = (event) => {
     const newName = event.target.value;
     setNameError("");
@@ -87,7 +132,9 @@ const AddUserPage = () => {
     } else {
       setEmailError("");
     }
-    if (!/^\d{10,12}$/.test(newPhone)) {
+    if (newPhone.trim() === "") {
+      setPhoneError("");
+    } else if (!/^\d{10,12}$/.test(newPhone)) {
       setPhoneError("Please enter a valid phone number");
       hasError = true;
     } else {
@@ -118,6 +165,7 @@ const AddUserPage = () => {
     }
 
     if (!hasError) {
+      setLoading(true);
       /////////////////////////////////////////action to be done////////////////////////////////////
       if (
         (/^\d{10,12}$/.test(newPhone)) &&
@@ -127,10 +175,60 @@ const AddUserPage = () => {
         setFName("");
         setEmail("");
         setPhone("");
-        setSubscribe(true);
-        setTimeout(() => {
-          setSubscribe(false);
-        }, 5000);
+      }
+      var countryId = countries?.find((country) => country.name === selectedCountry).id
+      const values = {
+        Username: fName,
+        Email: email,
+        Role: selectedRole,
+        PhoneNumber: phone,
+        CountryId: countryId,
+      };
+      try {
+        const response = await axios.post(
+          `${apiUrl}/api/Authentication/Register`,
+          values
+        );
+  
+        if (response.status === 200) {
+          toast.success("User added successfully", {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+        }
+      } catch (error) {
+        if (error?.response?.data) {
+          toast.error(error.response.data, {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+        } else {
+          toast.error("Internal Server Error!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+        }
+      }
+      finally {
+        setLoading(false);
       }
     }
   };
@@ -148,13 +246,13 @@ const AddUserPage = () => {
       <form onSubmit={onSubmit} action="request-demo" method="POST">
         <Box marginBottom={2}>
           <InputLabel htmlFor="name" sx={{ color: '#0B3782', marginBottom: 1 }}>
-            User Name
+            Username
           </InputLabel>
           <TextField
             sx={{ bgcolor: '#F5F5F5', borderRadius: '4px', width: "20rem" }}
             id="name"
             variant="outlined"
-            placeholder="Enter name"
+            placeholder="Enter a username"
             name="name"
             onChange={handleNameChange}
             value={fName}
@@ -232,7 +330,7 @@ const AddUserPage = () => {
                 Role
               </InputLabel>
               <DropdownList
-                selectedTypes={roles}
+                selectedTypes={roles.map((role) => role.name)}
                 placeholder={'Choose Role'}
                 value={selectedRole}
                 onChange={handleRoleDropdownChange}
@@ -255,7 +353,7 @@ const AddUserPage = () => {
                 Country
               </InputLabel>
               <DropdownList
-                selectedTypes={roles}
+                selectedTypes={countries.map((country) => country.name)}
                 placeholder={'Choose Country'}
                 value={selectedCountry}
                 onChange={handleCountryDropdownChange}
@@ -274,27 +372,18 @@ const AddUserPage = () => {
               {countryError}
             </Box>
           )}
-          <Box sx={{ display: "flex", gap: "5px", marginTop: "2rem" }}>
-            <Checkbox
-              checked={isChecked}
-              onChange={handleCheckboxChange}
-              style={{
-                color: "#0B3782",
-              }}
-            />
-            <InputLabel sx={{ color: '#0B3782', marginTop: "0.7rem" }}>
-              Active
-            </InputLabel>
-          </Box>
         </Box>
         <Box marginBottom={2}>
           {checkk && <Alert severity="error">Enter Valid User Information</Alert>}
-          {subscribe && <Alert severity="info">A new user is added successfully</Alert>}
+        </Box>
+        <Box marginBottom={2}>
+          {loading && <CircularProgress />}
         </Box>
         <Button type="submit" variant="contained" color="primary" sx={{ width: "10rem", backgroundColor: '#0B3782', marginTop: "2rem" }}>
           Submit
         </Button>
       </form>
+    <ToastContainer />
     </MainCard>
   );
 };
