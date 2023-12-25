@@ -1,3 +1,5 @@
+import React, { useState } from 'react';
+
 import PropTypes from 'prop-types';
 
 // material-ui
@@ -69,64 +71,168 @@ const FormSection = ({ title, children }) => (
 
 // ===============================|| UI COLOR ||=============================== //
 
-const UIColor = () => (
-  <MainCard title="Upload Contracts">
-    <Grid container spacing={gridSpacing}>
-      <Grid item xs={12}>
-        <SubCard>
-          <Grid container spacing={gridSpacing}>
-            <Grid item xs={12} sm={6} md={4} lg={6}>
-              <FormSection title="Merchant Name">
-                <TextField
-                  id="standard-search"
-                  type="search"
-                  variant="standard"
-                />
-              </FormSection>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={6}>
-              <FormSection title="Contract File">
-                <FileUpload image={ContractFile} allowedExtensions={['pdf']} />
-              </FormSection>            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={6}>
-              <FormSection title="Client Share">
-                <TextField id="standard-basic" variant="standard" />
-              </FormSection>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={6}>
-              <FormSection title="Date">
-                <CurrentDatePicker />
-              </FormSection>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={11}>
-              <FormSection title="Notes*">
-                <NoteButton />
-              </FormSection>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={12}>
-              <FormSection>
-                <Button
-                  variant="contained"
-                  sx={{
-                    backgroundColor: "#0B3782",
-                    color: (theme) => theme.palette.secondary.light,
-                    borderRadius: '8px',
-                    height: '40px',
-                    width: '150px',
-                    '&:hover': {
+const UIColor = () => {
+  const [selectedDateState, setSelectedDateState] = useState(new Date());
+  const [merchantValue, setMerchantValue] = useState('');
+  const [merchantError, setMerchantError] = useState('');
+  const [clientShareValue, setClientShareValue] = useState('');
+  const [clientShareError, setClientShareError] = useState('');
+  const [reportFile, setReportFile] = useState(null);
+  const [reportFileError, setReportFileError] = useState("");
+
+  const handleFileUpload = (file) => {
+    setReportFile(file);
+  };
+
+  const handleMerchantChange = (event) => {
+    setMerchantError("");
+    setMerchantValue(event.target.value);
+  };
+
+  const handleClientShareChange = (event) => {
+    setClientShareError("");
+    setClientShareValue(event.target.value);
+  };
+
+  const handleDateChange = (dateInfo) => {
+    setSelectedDateState(dateInfo);
+  };
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    let hasError = false;
+    const dateString = selectedDateState.toISOString().split('T')[0];
+    const [year, month] = dateString.split('-').map(Number);
+    console.log('jjjj', reportFile, year, month, merchantValue);
+
+    if (!merchantValue) {
+      setMerchantError("Please type a merchant name");
+      hasError = true;
+    } else {
+      setMerchantError("");
+    }
+
+    if (!clientShareValue) {
+      setClientShareError("Please type a client share");
+      hasError = true;
+    } else {
+      setClientShareError("");
+    }
+
+    if (reportFile == null) {
+      setReportFileError("Please select a report file");
+      hasError = true;
+    } else {
+      setReportFileError("");
+    }
+
+    if (!hasError) {
+      setMerchantValue('');
+      setReportFile(null);
+    }
+  };
+  return (
+    <MainCard title="Upload Contracts">
+      <Grid container spacing={gridSpacing}>
+        <Grid item xs={12}>
+          <SubCard>
+            <Grid container spacing={gridSpacing}>
+              <Grid item xs={12} sm={6} md={4} lg={6}>
+                <FormSection title="Merchant Name">
+                  {merchantError && (
+                    <Box
+                      sx={{
+                        color: '#d32f2f',
+                        fontSize: '0.78rem',
+                        marginBottom: '8px'
+                      }}
+                    >
+                      {merchantError}
+                    </Box>
+                  )}
+                  <TextField
+                    id="standard-search"
+                    type="search"
+                    variant="standard"
+                    value={merchantValue}
+                    onChange={handleMerchantChange}
+                  />
+                </FormSection>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4} lg={6}>
+                <FormSection title="Contract File">
+                  <Box sx={{ display: "flex", flexDirection: "column" }}>
+                    {reportFileError && (
+                      <Box
+                        sx={{
+                          color: '#d32f2f',
+                          fontSize: '0.78rem',
+                          marginBottom: '8px'
+                        }}
+                      >
+                        {reportFileError}
+                      </Box>
+                    )}
+                    <FileUpload image={ContractFile} allowedExtensions={['pdf']} onUpload={handleFileUpload} />
+                  </Box>
+                </FormSection>            </Grid>
+              <Grid item xs={12} sm={6} md={4} lg={6}>
+                <FormSection title="Client Share">
+                  {clientShareError && (
+                    <Box
+                      sx={{
+                        color: '#d32f2f',
+                        fontSize: '0.78rem',
+                        marginBottom: '8px'
+                      }}
+                    >
+                      {clientShareError}
+                    </Box>
+                  )}
+                  <TextField
+                    id="standard-basic"
+                    variant="standard"
+                    value={clientShareValue}
+                    onChange={handleClientShareChange}
+                  />
+                </FormSection>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4} lg={6}>
+                <FormSection title="Date">
+                  <CurrentDatePicker onDateChange={handleDateChange} />
+                </FormSection>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4} lg={11}>
+                <FormSection title="Notes*">
+                  <NoteButton />
+                </FormSection>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4} lg={12}>
+                <FormSection>
+                  <Button
+                    variant="contained"
+                    sx={{
                       backgroundColor: "#0B3782",
-                    },
-                  }}
-                >
-                  Save Contract
-                </Button>
-              </FormSection>
+                      color: (theme) => theme.palette.secondary.light,
+                      borderRadius: '8px',
+                      height: '40px',
+                      width: '150px',
+                      '&:hover': {
+                        backgroundColor: "#0B3782",
+                      },
+                    }}
+                    onClick={onSubmit}
+                  >
+                    Save Contract
+                  </Button>
+                </FormSection>
+              </Grid>
             </Grid>
-          </Grid>
-        </SubCard>
+          </SubCard>
+        </Grid>
       </Grid>
-    </Grid>
-  </MainCard>
-);
+    </MainCard>
+  );
+};
 
 export default UIColor;
