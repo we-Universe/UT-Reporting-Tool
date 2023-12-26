@@ -1,10 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-
-// material-ui
 import { Box, Typography } from '@mui/material';
 
-const FileUpload = ({ image, allowedExtensions, onUpload }) => {
+const FileUpload = ({ image, allowedExtensions, onUpload, flag }) => {
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -12,23 +10,33 @@ const FileUpload = ({ image, allowedExtensions, onUpload }) => {
     fileInputRef.current.click();
   };
 
+  useEffect(() => {
+    if (flag) {
+      const clearInput = () => clearFileInput();
+      clearInput();
+    }
+  }, [flag]);
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
 
     if (file) {
       const fileExtension = file.name.split('.').pop().toLowerCase();
-      setSelectedFile(file);
 
       if (!allowedExtensions.includes(fileExtension)) {
         alert(`Invalid file type. Please select a file with .${allowedExtensions.join(', ')} extension.`);
-        fileInputRef.current.value = '';
-        setSelectedFile(null);
         return;
       }
       if (onUpload) {
+        setSelectedFile(file);
         onUpload(file);
       }
     }
+  };
+
+  const clearFileInput = () => {
+    fileInputRef.current.value = '';
+    setSelectedFile(null);
   };
 
   return (

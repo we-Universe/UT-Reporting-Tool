@@ -5,7 +5,7 @@ import { gridSpacing } from 'store/constant';
 import DropdownList from 'ui-component/extended/DropdownList';
 import { selectedTypes, reportTypes } from 'store/typesData';
 import CurrentDatePicker from 'ui-component/extended/CurrentDatePicker';
-import NoteButton from 'ui-component/extended/NoteButton';
+import Note from 'ui-component/extended/Note';
 import FileUpload from 'ui-component/extended/FileUpload';
 import UploadFile from 'assets/images/icons/report.png';
 import ImiFile from 'assets/images/icons/imi.svg';
@@ -78,6 +78,11 @@ const Form = () => {
   const [refundReportFile, setRefundReportFile] = useState(rowData ? rowData.file : null);
   const [reportFileError, setReportFileError] = useState("");
   const [selectedDateState, setSelectedDateState] = useState(new Date());
+  const [flag, setFlag] = useState(false);
+  const [imiFlag, setImiFlag] = useState(false);
+  const [refundFlag, setRefundFlag] = useState(false);
+  const [differenciesFlag, setDifferenciesFlag] = useState(false);
+  const [mwFlag, setMwFlag] = useState(false);
 
   const handleDateChange = (dateInfo) => {
     setSelectedDateState(dateInfo);
@@ -88,6 +93,7 @@ const Form = () => {
   };
 
   const handleFileUpload = (file) => {
+    setReportFileError("");
     setReportFile(file);
   };
 
@@ -130,8 +136,8 @@ const Form = () => {
     } else {
       setTelecomError("");
     }
-    
-    if (!reportError) {
+
+    if (!selectedReport) {
       setReportError("Please select a report type");
       hasError = true;
     } else {
@@ -149,6 +155,19 @@ const Form = () => {
       setSelectedTelecom('');
       setSelectedReport('');
       setReportFile(null);
+      setApproved(false);
+      setFlag(true);
+      setImiFlag(true);
+      setRefundFlag(true);
+      setMwFlag(true);
+      setDifferenciesFlag(true);
+      setTimeout(() => {
+        setFlag(false);
+        setImiFlag(false);
+        setRefundFlag(false);
+        setMwFlag(false);
+        setDifferenciesFlag(false);
+      }, 200);
     }
   };
 
@@ -199,7 +218,7 @@ const Form = () => {
                     </Box>
                   )}
                   <Box sx={{ width: "fit-content" }}>
-                    <FileUpload image={UploadFile} allowedExtensions={['xlsx']} onUpload={handleFileUpload} />
+                    <FileUpload image={UploadFile} allowedExtensions={['xlsx']} onUpload={handleFileUpload} flag={flag} />
                   </Box>
                 </Box>
               </FormSection>
@@ -231,7 +250,7 @@ const Form = () => {
 
               {/* IMI File */}
               <FormSection title="IMI File">
-                <FileUpload image={ImiFile} allowedExtensions={['xlsx']} onUpload={handleImiFileUpload} />
+                <FileUpload image={ImiFile} allowedExtensions={['xlsx']} onUpload={handleImiFileUpload} flag={imiFlag} />
               </FormSection>
 
               {/* Date */}
@@ -243,17 +262,17 @@ const Form = () => {
 
               {/* Refund File */}
               <FormSection title="Refund File">
-                <FileUpload image={RefundFile} allowedExtensions={['xlsx']} onUpload={handleRefundFileUpload} />
+                <FileUpload image={RefundFile} allowedExtensions={['xlsx']} onUpload={handleRefundFileUpload} flag={refundFlag} />
               </FormSection>
 
               {/* Differencies File */}
               <FormSection title="Differencies File">
-                <FileUpload image={DifferenciesFile} allowedExtensions={['xlsx']} onUpload={handleDiffrenciesFileUpload} />
+                <FileUpload image={DifferenciesFile} allowedExtensions={['xlsx']} onUpload={handleDiffrenciesFileUpload} flag={differenciesFlag} />
               </FormSection>
 
               {/* MW File */}
               <FormSection title="MW File">
-                <FileUpload image={MWFile} allowedExtensions={['xlsx']} onUpload={handleMwFileUpload} />
+                <FileUpload image={MWFile} allowedExtensions={['xlsx']} onUpload={handleMwFileUpload} flag={mwFlag} />
               </FormSection>
 
               {/* Approved */}
@@ -267,7 +286,7 @@ const Form = () => {
 
               {/* Notes */}
               <FormSection title="Notes*">
-                <NoteButton value={rowData ? rowData.notes : ''} />
+                <Note value={rowData ? rowData.notes : ''} />
               </FormSection>
 
               {/* Save Button */}
