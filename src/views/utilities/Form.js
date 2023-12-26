@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Grid, Typography, Button, Checkbox, Box } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
@@ -26,28 +26,43 @@ const FormSection = ({ title, children }) => (
 
 const Form = () => {
   const { id } = useParams();
+  const [reports, setReports] = useState([]);
+
+  const fetchReports = async () => {
+    try {
+      const response = await fetch(`https://localhost:7071/api/Reports/GetReportsByOperatorReport`);
+
+      if (!response.ok) {
+        console.error('Failed to fetch reports. HTTP Status:', response.status);
+        return;
+      }
+
+      const data = await response.json();
+      console.log('Fetched reports:', data);
+      setReports(data);
+
+    } catch (error) {
+      console.error('Error fetching reports:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReports();
+  }, []);
 
   let rowData;
-  const data = useMemo(() => [
-    { id: 1, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1Default Notes 1Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Jawwal", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 2, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 2\nDefault Notes\nDefault Notes', approved: 1, Month: 12, Year: 2023, telecomName: "Jawwal", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 3, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Jawwal", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 4, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 2, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 5, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 6, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Jawwal", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 7, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 8, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 9, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Jawwal", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 10, type: 'RBT', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 11, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 12, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 9, Year: 2023, telecomName: "Jawwal", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 13, type: 'PULL', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 14, type: 'RBT', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 15, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 10, Year: 2023, telecomName: "Jawwal", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 16, type: 'PULL', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Jawwal", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 17, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 18, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" }
-  ], []);
+
+  const data = useMemo(() => reports.map((report) => ({
+    id: report.id,
+    type: report.type,
+    file: report.file,
+    notes: report.notes.map(note => note.content).join('\n'),
+    approved: report.approved,
+    Month: report.month,
+    Year: report.year,
+    telecomName: report.telecomName,
+    status: report.status,
+  })), [reports]);
 
   rowData = data.find((item) => item.id === Number(id)) || {};
 
@@ -115,12 +130,14 @@ const Form = () => {
     } else {
       setTelecomError("");
     }
+    
     if (!reportError) {
       setReportError("Please select a report type");
       hasError = true;
     } else {
       setReportError("");
     }
+
     if (reportFile == null) {
       setReportFileError("Please select a report file");
       hasError = true;
