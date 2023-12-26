@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 //project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -40,20 +41,84 @@ const UploadFileContainer = styled(Box)({
 
 const UploadInvoice = () => {
   const [invoiceReportInfo, setInvoiceReportInfo] = useState({
-    telecomName: '',
-    billingDate: '',
-    status: '',
-    invoiceYear: '',
-    invoiceMonth: '',
-    totalAmount: '',
-    paymentDate: '',
-    invoiceFile: '',
-    swiftFile: '',
-    receiptFile: ''
+    telecomName: 0,
+    billingDate: null,
+    status: 0,
+    invoiceYear: 0,
+    invoiceMonth: 0,
+    totalAmount: 0,
+    paymentDate: null,
+    invoiceFile: [],
+    swiftFile: [],
+    receiptFile: [],
+    notes: []
   });
 
-  const handleInvoiceSubmit = () => {
+  //const apiUrl = config.reportingAPIUrls.url;
+
+  // const handleInvoiceSubmit = async () => {
+  //   try {
+  //     const response = await axios.post(`https://localhost:7071/api/Invoice/AddInvoiceReport`, invoiceReportInfo);
+  //     console.log('Post created:', response.data);
+  //   } catch (error) {
+  //     console.error('Error creating post:', error);
+  //     console.log('Server response:', error.response);
+  //     console.log('Request payload:', error.config.data); // Log the exact payload sent to the server
+  //   }
+  //   console.log(invoiceReportInfo);
+  // };
+
+  const handleInvoiceSubmit = async () => {
+    try {
+      const response = await axios.post(
+        `https://localhost:7071/api/Invoice/AddInvoiceReport`,
+        { invoiceModel: invoiceReportInfo },
+        {
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+      console.log('Post created:', response.data);
+    } catch (error) {
+      console.error('Error creating post:', error);
+      console.log('Server response:', error.response);
+      console.log('Request payload:', JSON.stringify(invoiceReportInfo));
+    }
     console.log(invoiceReportInfo);
+  };
+
+  const fileToArrayBytes = (file) => {
+    return new Promise((resolve) => {
+      if (!file) {
+        resolve(null);
+      } else {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const fileData = new Uint8Array(reader.result);
+          resolve(fileData);
+        };
+        reader.readAsArrayBuffer(file);
+      }
+    });
+  };
+
+  const handleInvoiceFileUpload = async (file) => {
+    const invoiceFileData = await fileToArrayBytes(file);
+    //setInvoiceReportInfo({ ...invoiceReportInfo, invoiceFile: invoiceFileData });
+    setInvoiceReportInfo({ ...invoiceReportInfo, invoiceFile: Array.from(invoiceFileData) });
+  };
+
+  const handleSwiftFileUpload = async (file) => {
+    const swiftFileData = await fileToArrayBytes(file);
+    setInvoiceReportInfo({ ...invoiceReportInfo, swiftFile: swiftFileData });
+  };
+
+  const handleReceiptFileUpload = async (file) => {
+    const receiptFileData = await fileToArrayBytes(file);
+    setInvoiceReportInfo({ ...invoiceReportInfo, receiptFile: receiptFileData });
+  };
+
+  const handleNoteChange = (updatedNotes) => {
+    setInvoiceReportInfo({ ...invoiceReportInfo, notes: updatedNotes });
   };
 
   return (
@@ -74,29 +139,26 @@ const UploadInvoice = () => {
                 value={invoiceReportInfo.telecomName}
                 onChange={(event) => setInvoiceReportInfo({ ...invoiceReportInfo, telecomName: event.target.value })}
               >
-                <MenuItem value="Jawwal">Jawwal</MenuItem>
-                <MenuItem value="Ooredoo">Ooredoo</MenuItem>
+                <MenuItem value="1">Jawwal</MenuItem>
+                <MenuItem value="2">Ooredoo</MenuItem>
               </Select>
             </FormControl>
           </FormSection>
-
           <FormSection title="Select Invoice Status">
             <FormControl sx={{ width: '100%', marginBottom: '20px' }}>
               <Select
                 value={invoiceReportInfo.status}
                 onChange={(event) => setInvoiceReportInfo({ ...invoiceReportInfo, status: event.target.value })}
               >
-                <MenuItem value="Billed">Billed</MenuItem>
-                <MenuItem value="unbilled">unbilled</MenuItem>
+                <MenuItem value="1">Billed</MenuItem>
+                <MenuItem value="2">unbilled</MenuItem>
               </Select>
             </FormControl>
           </FormSection>
-
           <FormSection title="Select Invoice Date">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DesktopDatePicker
                 value={invoiceReportInfo.invoiceDate ? dayjs(invoiceReportInfo.invoiceDate) : null}
-                // onChange={(date) => setInvoiceReportInfo({ ...invoiceReportInfo, invoiceDate: date.format() })}
                 onChange={(date) => {
                   if (date) {
                     const selectedMonth = date.month() + 1; // months are zero-indexed
@@ -114,7 +176,6 @@ const UploadInvoice = () => {
               />
             </LocalizationProvider>
           </FormSection>
-
           <FormSection title="Select Billing Date">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DesktopDatePicker
@@ -125,7 +186,6 @@ const UploadInvoice = () => {
               />
             </LocalizationProvider>
           </FormSection>
-
           <FormSection title="Select payment Date">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DesktopDatePicker
@@ -136,27 +196,24 @@ const UploadInvoice = () => {
               />
             </LocalizationProvider>
           </FormSection>
-
           <FormSection title="Upload Invoice Report">
             <UploadFileContainer>
-              <FileUpload image={uploadInvoiceIcon} allowedExtensions={['pdf']} />
+              <FileUpload image={uploadInvoiceIcon} allowedExtensions={['pdf']} onUpload={handleInvoiceFileUpload} />
             </UploadFileContainer>
           </FormSection>
-
           <FormSection title="Upload Swift File">
             <UploadFileContainer>
-              <FileUpload image={uploadInvoiceIcon} allowedExtensions={['pdf']} />
+              <FileUpload image={uploadInvoiceIcon} allowedExtensions={['pdf']} onUpload={handleSwiftFileUpload} />
             </UploadFileContainer>
           </FormSection>
-
           <FormSection title="Upload Receipt File">
             <UploadFileContainer>
-              <FileUpload image={uploadInvoiceIcon} allowedExtensions={['pdf']} />
+              <FileUpload image={uploadInvoiceIcon} allowedExtensions={['pdf']} onUpload={handleReceiptFileUpload} />
             </UploadFileContainer>
           </FormSection>
 
           <FormSection title="Notes">
-            <NoteButton />
+            <NoteButton notes={invoiceReportInfo.notes} onChange={handleNoteChange} />
           </FormSection>
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', marginBottom: '20px' }}>
