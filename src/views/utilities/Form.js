@@ -196,7 +196,7 @@ const Form = () => {
                     <DropdownList
                       selectedTypes={selectedTypes}
                       placeholder={'Choose telecom name'}
-                      value={rowData ? rowData.telecomName : selectedTelecom}
+                      value={(rowData.length>0) ? rowData.telecomName : selectedTelecom}
                       onChange={handleTelecomDropdownChange}
                     />
                   </Box>
@@ -241,7 +241,7 @@ const Form = () => {
                     <DropdownList
                       selectedTypes={reportTypes}
                       placeholder={'Choose report type'}
-                      value={rowData ? rowData.type : selectedReport}
+                      value={(rowData.length>0) ? rowData.type : selectedReport}
                       onChange={handleReportDropdownChange}
                     />
                   </Box>
