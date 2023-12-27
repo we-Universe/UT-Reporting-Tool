@@ -138,6 +138,7 @@ const UIColor = () => {
       }, 200);
     }
   };
+
   return (
     <MainCard title="Upload Contracts">
       <Grid container spacing={gridSpacing}>

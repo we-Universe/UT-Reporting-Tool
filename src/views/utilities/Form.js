@@ -14,6 +14,7 @@ import DifferenciesFile from 'assets/images/icons/testing.png';
 import MWFile from 'assets/images/icons/media-world.png';
 import SubCard from 'ui-component/cards/SubCard';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const FormSection = ({ title, children }) => (
   <Grid item xs={12} md={6}>
@@ -38,7 +39,6 @@ const Form = () => {
       }
 
       const data = await response.json();
-      console.log('Fetched reports:', data);
       setReports(data);
 
     } catch (error) {
@@ -46,8 +46,11 @@ const Form = () => {
     }
   };
 
+  let reportFileName = (Object.keys(rowData).length > 0)?`ReportFile_${rowData.telecomName}_${rowData.type}_${rowData.month}_${rowData.year}.xlsx`:"";
+
   useEffect(() => {
     fetchReports();
+    console.log('oooo', reportFileName)
   }, []);
 
   let rowData;
@@ -67,8 +70,8 @@ const Form = () => {
   rowData = data.find((item) => item.id === Number(id)) || {};
 
   const [approved, setApproved] = useState(rowData ? (rowData.approved == 1) ? true : false : false);
-  const [selectedTelecom, setSelectedTelecom] = useState(rowData ? rowData.telecomName : '');
-  const [selectedReport, setSelectedReport] = useState(rowData ? rowData.type : '');
+  const [selectedTelecom, setSelectedTelecom] = useState((Object.keys(rowData).length > 0) ? rowData.telecomName : '');
+  const [selectedReport, setSelectedReport] = useState((Object.keys(rowData).length > 0) ? rowData.type : '');
   const [telecomError, setTelecomError] = useState("");
   const [reportError, setReportError] = useState("");
   const [reportFile, setReportFile] = useState(rowData ? rowData.file : null);
@@ -83,6 +86,7 @@ const Form = () => {
   const [refundFlag, setRefundFlag] = useState(false);
   const [differenciesFlag, setDifferenciesFlag] = useState(false);
   const [mwFlag, setMwFlag] = useState(false);
+  let year='', month='';
 
   const handleDateChange = (dateInfo) => {
     setSelectedDateState(dateInfo);
@@ -123,35 +127,101 @@ const Form = () => {
     setSelectedReport(value);
   };
 
+  const getReportTypeId = async (reportTypeName) => {
+    try {
+      const response = await axios.get(`https://localhost:7071/api/ReportsTypes/GetReportTypeIdFromName?name=${reportTypeName}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching report type ID:', error);
+      throw error;
+    }
+  };
+
+  const getOperatorId = async (operatorName) => {
+    try {
+      const response = await axios.get(`https://localhost:7071/api/Operator/GetOperatorIdByCompanyName?name=${operatorName}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching Operator ID:', error);
+      throw error;
+    }
+  };
+
+  const fileToArrayBytes = (file) => {
+    return new Promise((resolve) => {
+      if (!file) {
+        resolve(null);
+      } else {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64String = btoa(
+            String.fromCharCode.apply(null, new Uint8Array(reader.result))
+          );
+          resolve(base64String);
+        };
+        reader.readAsArrayBuffer(file);
+      }
+    });
+  };
+
   const onSubmit = async (event) => {
     event.preventDefault();
     let hasError = false;
     const dateString = selectedDateState.toISOString().split('T')[0];
-    const [year, month] = dateString.split('-').map(Number);
-    console.log('jjjj', reportFile, selectedReport, approved, selectedTelecom, year, month, imiReportFile, diffrenciesReportFile, mwReportFile, refundReportFile);
+    [year, month] = dateString.split('-').map(Number);
+    console.log('hhhh', selectedTelecom, reportFileName, month, year);
 
-    if (!selectedTelecom) {
+    if (!selectedTelecom && (id == ":id")) {
       setTelecomError("Please select a telecom name");
       hasError = true;
     } else {
       setTelecomError("");
     }
 
-    if (!selectedReport) {
+    if (!selectedReport && (id == ":id")) {
       setReportError("Please select a report type");
       hasError = true;
     } else {
       setReportError("");
     }
 
-    if (reportFile == null) {
+    if (reportFile == null && (id == ":id")) {
       setReportFileError("Please select a report file");
       hasError = true;
-    } else {
+    }
+    else {
       setReportFileError("");
     }
 
     if (!hasError) {
+      if (id == ":id") {
+        try {
+          const reportTypeId = await getReportTypeId(selectedReport);
+          const operatorId = await getOperatorId(selectedTelecom);
+          const reportFileBase64 = await fileToArrayBytes(reportFile);
+          const differencesFileBase64 = await fileToArrayBytes(diffrenciesReportFile);
+          const imiFileBase64 = await fileToArrayBytes(imiReportFile);
+          const mwFileBase64 = await fileToArrayBytes(mwReportFile);
+          const refundFileBase64 = await fileToArrayBytes(refundReportFile);
+          const response = await axios.post('https://localhost:7071/api/Reports/AddReport', {
+            "reportTypeId": reportTypeId,
+            "lastModified": new Date().toISOString(),
+            "approvalStatusID": 1,
+            "month": month,
+            "year": year,
+            "reportFile": reportFileBase64,
+            "operatorId": operatorId,
+            "imiFile": imiFileBase64,
+            "differencesFile": differencesFileBase64,
+            "mwFile": mwFileBase64,
+            "refundFile": refundFileBase64
+          });
+
+          console.log('API Response:', response.data);
+        } catch (error) {
+          console.error('Error submitting report:', error);
+        }
+      }
       setSelectedTelecom('');
       setSelectedReport('');
       setReportFile(null);
@@ -161,6 +231,7 @@ const Form = () => {
       setRefundFlag(true);
       setMwFlag(true);
       setDifferenciesFlag(true);
+
       setTimeout(() => {
         setFlag(false);
         setImiFlag(false);
@@ -196,7 +267,7 @@ const Form = () => {
                     <DropdownList
                       selectedTypes={selectedTypes}
                       placeholder={'Choose telecom name'}
-                      value={(rowData.length>0) ? rowData.telecomName : selectedTelecom}
+                      value={(Object.keys(rowData).length > 0) ? rowData.telecomName : selectedTelecom}
                       onChange={handleTelecomDropdownChange}
                     />
                   </Box>
@@ -241,7 +312,7 @@ const Form = () => {
                     <DropdownList
                       selectedTypes={reportTypes}
                       placeholder={'Choose report type'}
-                      value={(rowData.length>0) ? rowData.type : selectedReport}
+                      value={(Object.keys(rowData).length > 0) ? rowData.type : selectedReport}
                       onChange={handleReportDropdownChange}
                     />
                   </Box>
@@ -286,7 +357,7 @@ const Form = () => {
 
               {/* Notes */}
               <FormSection title="Notes*">
-                <Note value={rowData ? rowData.notes : ''} />
+                <Note value={(Object.keys(rowData).length > 0) ? rowData.notes : ''} />
               </FormSection>
 
               {/* Save Button */}
