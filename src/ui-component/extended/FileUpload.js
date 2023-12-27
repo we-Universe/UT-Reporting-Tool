@@ -2,9 +2,10 @@ import React, { useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Box, Typography } from '@mui/material';
 
-const FileUpload = ({ image, allowedExtensions, onUpload, flag }) => {
+const FileUpload = ({ image, allowedExtensions, onUpload, flag, reportFileName }) => {
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [name, setName] = useState("");
 
   const handleImageClick = () => {
     fileInputRef.current.click();
@@ -17,6 +18,12 @@ const FileUpload = ({ image, allowedExtensions, onUpload, flag }) => {
     }
   }, [flag]);
 
+  useEffect(() => {
+    if (reportFileName) {
+      setName(reportFileName);
+    }
+  }, [reportFileName]);
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
 
@@ -27,8 +34,10 @@ const FileUpload = ({ image, allowedExtensions, onUpload, flag }) => {
         alert(`Invalid file type. Please select a file with .${allowedExtensions.join(', ')} extension.`);
         return;
       }
+      
       if (onUpload) {
         setSelectedFile(file);
+        setName(file.name);
         onUpload(file);
       }
     }
@@ -37,6 +46,7 @@ const FileUpload = ({ image, allowedExtensions, onUpload, flag }) => {
   const clearFileInput = () => {
     fileInputRef.current.value = '';
     setSelectedFile(null);
+    setName(""); 
   };
 
   return (
@@ -49,10 +59,16 @@ const FileUpload = ({ image, allowedExtensions, onUpload, flag }) => {
         <img src={image} alt="Upload File" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       </button>
       <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
-      {selectedFile && (
+      {name !== "" ? (
         <Typography variant="body2" style={{ marginTop: '8px', marginLeft: '8px' }}>
-          {selectedFile.name}
+          {name}
         </Typography>
+      ) : (
+        selectedFile && (
+          <Typography variant="body2" style={{ marginTop: '8px', marginLeft: '8px' }}>
+            {selectedFile.name}
+          </Typography>
+        )
       )}
     </Box>
   );
