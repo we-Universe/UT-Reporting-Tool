@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -16,11 +16,11 @@ import SubCard from '../../../ui-component/cards/SubCard';
 import MainCard from '../../../ui-component/cards/MainCard';
 import logo from 'assets/images/icons/excel.png';
 import DropdownList from '../../../ui-component/extended/DropdownList';
-import { reportTypes, merchantName } from '../../../store/typesData';
+import { merchantName } from '../../../store/typesData';
 import EditButton from '../../../ui-component/EditButton/EditButton';
 import SaveButton from '../../../ui-component/SaveButton/SaveButton';
-import MerchantImage from '../../../assets/images/icons/seller.png'; 
-import NoteImage from '../../../assets/images/icons/pencil.png'; 
+import MerchantImage from '../../../assets/images/icons/seller.png';
+import NoteImage from '../../../assets/images/icons/pencil.png';
 import StatusImage from '../../../assets/images/icons/check-list.png';
 
 const monthAbbreviations = {
@@ -83,27 +83,60 @@ const PopularCard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [toSelectedDate, setToSelectedDate] = useState(new Date());
   const [viewAll, setViewAll] = useState(false);
+  const [reports, setReports] = useState([]);
+  const [reportTypes, setReportTypes] = useState([]);
 
-  const data = useMemo(() => [
-    { id: 1, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1Default Notes 1Default Notes 1', approved: 1, Month: 11, Year: 2023, merchantName: "hello", status: "eeee" },
-    { id: 2, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 2', approved: 1, Month: 12, Year: 2023, merchantName: "hello", status: "eeee" },
-    { id: 3, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hello", status: "eeee" },
-    { id: 4, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 2, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 5, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 6, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 7, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 8, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 9, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 10, type: 'RBT', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 11, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 12, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 9, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 13, type: 'PULL', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 14, type: 'RBT', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 15, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 10, Year: 2023, merchantName: "hello", status: "eeee" },
-    { id: 16, type: 'PULL', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 17, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" },
-    { id: 18, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, merchantName: "hi", status: "eeee" }
-  ], []);
+  const fetchReports = async () => {
+    try {
+      const response = await fetch(`https://localhost:7071/api/Reports/GetReportByMerchantReport`);
+      if (!response.ok) {
+        console.error('Failed to fetch reports. HTTP Status:', response.status);
+        return;
+      }
+
+      const data = await response.json();
+      console.log('Fetched reports:', data);
+      setReports(data);
+
+    } catch (error) {
+      console.error('Error fetching reports:', error);
+    }
+  };
+
+  const fetchReportTypes = async () => {
+    try {
+      const response = await fetch(`https://localhost:7071/api/ReportsTypes/GetAllReportTypeNames`);
+
+      if (!response.ok) {
+        console.error('Failed to fetch reports. HTTP Status:', response.status);
+        return;
+      }
+
+      const data = await response.json();
+      console.log('Fetched reports:', data);
+      setReportTypes(data);
+
+    } catch (error) {
+      console.error('Error fetching reports:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReports(); 
+    fetchReportTypes();
+  }, []);
+
+  const data = useMemo(() => reports.map((report) => ({
+    id: report.id,
+    type: report.type,
+    file: report.file,
+    notes: report.notes.map(note => note.content).join('\n'),
+    approved: report.approved,
+    Month: report.month,
+    Year: report.year,
+    merchantName: report.merchantName,
+    status: report.status,
+  })), [reports]);
 
   const filteredData = useMemo(() => {
     let filtered = data;
@@ -171,7 +204,7 @@ const PopularCard = () => {
       Header: () => (
         <Box style={{ display: 'flex', alignItems: 'center' }}>
           <img
-            src={MerchantImage} 
+            src={MerchantImage}
             alt="Merchant Logo"
             style={{ marginRight: '0.5rem', width: '24px', height: '24px' }}
           />
@@ -207,7 +240,7 @@ const PopularCard = () => {
       Header: () => (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <img
-            src={NoteImage} 
+            src={NoteImage}
             alt="Note Logo"
             style={{ marginRight: '0.5rem', width: '24px', height: '24px' }}
           />
@@ -238,7 +271,7 @@ const PopularCard = () => {
       Header: () => (
         <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <img
-            src={StatusImage} 
+            src={StatusImage}
             alt="Status Logo"
             style={{ marginRight: '0.5rem', width: '24px', height: '24px' }}
           />

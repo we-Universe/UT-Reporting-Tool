@@ -3,7 +3,7 @@ import { Grid, Typography, Button, Checkbox, Box } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import DropdownList from 'ui-component/extended/DropdownList';
-import { selectedTypes, reportTypes } from 'store/typesData';
+import { selectedTypes } from 'store/typesData';
 import CurrentDatePicker from 'ui-component/extended/CurrentDatePicker';
 import Note from 'ui-component/extended/Note';
 import FileUpload from 'ui-component/extended/FileUpload';
@@ -28,7 +28,8 @@ const FormSection = ({ title, children }) => (
 const Form = () => {
   const { id } = useParams();
   const [reports, setReports] = useState([]);
-
+  const [reportTypes, setReportTypes] = useState([]);
+  
   const fetchReports = async () => {
     try {
       const response = await fetch(`https://localhost:7071/api/Reports/GetReportsByOperatorReport`);
@@ -40,6 +41,23 @@ const Form = () => {
 
       const data = await response.json();
       setReports(data);
+    } catch (error) {
+      console.error('Error fetching reports:', error);
+    }
+  };
+
+  const fetchReportTypes = async () => {
+    try {
+      const response = await fetch(`https://localhost:7071/api/ReportsTypes/GetAllReportTypeNames`);
+
+      if (!response.ok) {
+        console.error('Failed to fetch reports. HTTP Status:', response.status);
+        return;
+      }
+
+      const data = await response.json();
+      console.log('Fetched reports:', data);
+      setReportTypes(data);
 
     } catch (error) {
       console.error('Error fetching reports:', error);
@@ -48,6 +66,7 @@ const Form = () => {
 
   useEffect(() => {
     fetchReports();
+    fetchReportTypes();
   }, []);
 
   let rowData;
@@ -56,6 +75,10 @@ const Form = () => {
     id: report.id,
     type: report.type,
     file: report.file,
+    mwFile: report.mwFile,
+    refundFile: report.refundFile,
+    differenciesFile: report.differenciesFile,
+    imiFile: report.imiFile,
     notes: report.notes.map(note => note.content).join('\n'),
     approved: report.approved,
     Month: report.month,
@@ -65,16 +88,16 @@ const Form = () => {
   })), [reports]);
 
   rowData = data.find((item) => item.id === Number(id)) || {};
-  const [approved, setApproved] = useState((rowData != {}) ? (rowData.approved >= 6) ? true : false : false);
-  const [selectedTelecom, setSelectedTelecom] = useState((rowData != {}) ? rowData.telecomName : '');
-  const [selectedReport, setSelectedReport] = useState((rowData != {}) ? rowData.type : '');
+  const [approved, setApproved] = useState(false);
+  const [selectedTelecom, setSelectedTelecom] = useState('');
+  const [selectedReport, setSelectedReport] = useState('');
   const [telecomError, setTelecomError] = useState("");
   const [reportError, setReportError] = useState("");
-  const [reportFile, setReportFile] = useState((rowData != {}) ? rowData.file : null);
-  const [imiReportFile, setImiReportFile] = useState((rowData != {}) ? rowData.file : null);
-  const [diffrenciesReportFile, setDiffrenciesReportFile] = useState((rowData != {}) ? rowData.file : null);
-  const [mwReportFile, setMwReportFile] = useState((rowData != {}) ? rowData.file : null);
-  const [refundReportFile, setRefundReportFile] = useState((rowData != {}) ? rowData.file : null);
+  const [reportFile, setReportFile] = useState(null);
+  const [imiReportFile, setImiReportFile] = useState(null);
+  const [diffrenciesReportFile, setDiffrenciesReportFile] = useState(null);
+  const [mwReportFile, setMwReportFile] = useState(null);
+  const [refundReportFile, setRefundReportFile] = useState(null);
   const [reportFileError, setReportFileError] = useState("");
   const [selectedDateState, setSelectedDateState] = useState(new Date());
   const [flag, setFlag] = useState(false);
@@ -88,6 +111,26 @@ const Form = () => {
   const [diffrenciesFileName, setDiffrenciesFileName] = useState("");
   const [refundFileName, setRefundFileName] = useState("");
   const [mwFileName, setMwFileName] = useState("");
+  const [fileChange, setFileChange] = useState(false);
+  const [imiFileChange, setImiFileChange] = useState(false);
+  const [differenciesFileChange, setDifferenciesFileChange] = useState(false);
+  const [refundFileChange, setRefundFileChange] = useState(false);
+  const [mwFileChange, setMwFileChange] = useState(false);
+
+  useEffect(() => {
+    if (Object.keys(rowData).length > 0) {
+      setSelectedTelecom(rowData.telecomName);
+      setSelectedReport(rowData.type);
+      setReportFile(rowData.file);
+      setImiReportFile(rowData.imiFile);
+      setDiffrenciesReportFile(rowData.differenciesFile);
+      setMwReportFile(rowData.mwFile);
+      setRefundReportFile(rowData.refundFile);
+      if (rowData.approved >= 6) {
+        setApproved(true);
+      }
+    }
+  }, [rowData]);
 
   useEffect(() => {
     if (id !== ":id") {
@@ -111,22 +154,27 @@ const Form = () => {
     setReportFileError("");
     setReportFileName("");
     setReportFile(file);
+    setFileChange(true);
   };
 
   const handleImiFileUpload = (file) => {
     setImiReportFile(file);
+    setImiFileChange(true);
   };
 
   const handleMwFileUpload = (file) => {
     setMwReportFile(file);
+    setMwFileChange(true);
   };
 
   const handleRefundFileUpload = (file) => {
     setRefundReportFile(file);
+    setRefundFileChange(true);
   };
 
   const handleDiffrenciesFileUpload = (file) => {
     setDiffrenciesReportFile(file);
+    setDifferenciesFileChange(true);
   };
 
   const handleTelecomDropdownChange = (value) => {
@@ -181,7 +229,6 @@ const Form = () => {
     let hasError = false;
     const dateString = selectedDateState.toISOString().split('T')[0];
     [year, month] = dateString.split('-').map(Number);
-    console.log('hhhh', selectedTelecom, reportFileName);
 
     if (!selectedTelecom && (id == ":id")) {
       setTelecomError("Please select a telecom name");
@@ -242,7 +289,6 @@ const Form = () => {
         setRefundFlag(true);
         setMwFlag(true);
         setDifferenciesFlag(true);
-
         setTimeout(() => {
           setFlag(false);
           setImiFlag(false);
@@ -250,6 +296,37 @@ const Form = () => {
           setMwFlag(false);
           setDifferenciesFlag(false);
         }, 200);
+      }
+      else {
+        try {
+
+          const reportTypeId = await getReportTypeId(selectedReport);
+          const operatorId = await getOperatorId(selectedTelecom);
+          let reportFileBase64 = fileChange ? await fileToArrayBytes(reportFile) : reportFile;
+          let imiFileBase64 = imiFileChange ? await fileToArrayBytes(imiReportFile) : imiReportFile;
+          let differencesFileBase64 = differenciesFileChange ? await fileToArrayBytes(diffrenciesReportFile) : diffrenciesReportFile;
+          let mwFileBase64 = mwFileChange ? await fileToArrayBytes(mwReportFile) : mwReportFile;
+          let refundFileBase64 = refundFileChange ? await fileToArrayBytes(refundReportFile) : refundReportFile;
+
+          const apiUrl = `https://localhost:7071/api/Reports/EditReport?id=${id}`;
+          const response = await axios.put(apiUrl, {
+            "id": id,
+            "reportTypeId": reportTypeId,
+            "lastModified": new Date().toISOString(),
+            "approvalStatusID": approved ? 5 : 4,
+            "month": month,
+            "year": year,
+            "reportFile": reportFileBase64,
+            "operatorId": operatorId,
+            "imiFile": imiFileBase64,
+            "differencesFile": differencesFileBase64,
+            "mwFile": mwFileBase64,
+            "refundFile": refundFileBase64
+          });
+          console.log('API Response:', response.data);
+        } catch (error) {
+          console.error('Error submitting report:', error);
+        }
       }
     }
   };
@@ -301,7 +378,13 @@ const Form = () => {
                     </Box>
                   )}
                   <Box sx={{ width: "fit-content" }}>
-                    <FileUpload image={UploadFile} allowedExtensions={['xlsx']} onUpload={handleFileUpload} flag={flag} reportFileName={reportFileName} />
+                    <FileUpload
+                      image={UploadFile}
+                      allowedExtensions={['xlsx']}
+                      onUpload={handleFileUpload}
+                      flag={flag}
+                      reportFileName={reportFileName}
+                    />
                   </Box>
                 </Box>
               </FormSection>
@@ -333,7 +416,7 @@ const Form = () => {
 
               {/* IMI File */}
               <FormSection title="IMI File">
-                <FileUpload image={ImiFile} allowedExtensions={['xlsx']} onUpload={handleImiFileUpload} flag={imiFlag} reportFileName={imiFileName}/>
+                <FileUpload image={ImiFile} allowedExtensions={['xlsx']} onUpload={handleImiFileUpload} flag={imiFlag} reportFileName={imiFileName} />
               </FormSection>
 
               {/* Date */}

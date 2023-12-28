@@ -3,13 +3,6 @@ export const selectedTypes = [
     'Ooredoo'
 ];
 
-export const reportTypes = [
-    'PUSH',
-    'PULL',
-    'RBT',
-    'DCB'
-];
-
 export const merchantName = [
     'hi',
     'hello'
