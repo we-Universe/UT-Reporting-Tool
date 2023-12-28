@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Grid, Typography, Button, Checkbox, Box } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import DropdownList from 'ui-component/extended/DropdownList';
 import { selectedTypes, reportTypes } from 'store/typesData';
 import CurrentDatePicker from 'ui-component/extended/CurrentDatePicker';
-import NoteButton from 'ui-component/extended/NoteButton';
+import Note from 'ui-component/extended/Note';
 import FileUpload from 'ui-component/extended/FileUpload';
 import UploadFile from 'assets/images/icons/report.png';
 import ImiFile from 'assets/images/icons/imi.svg';
@@ -14,6 +14,7 @@ import DifferenciesFile from 'assets/images/icons/testing.png';
 import MWFile from 'assets/images/icons/media-world.png';
 import SubCard from 'ui-component/cards/SubCard';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const FormSection = ({ title, children }) => (
   <Grid item xs={12} md={6}>
@@ -26,43 +27,77 @@ const FormSection = ({ title, children }) => (
 
 const Form = () => {
   const { id } = useParams();
+  const [reports, setReports] = useState([]);
+
+  const fetchReports = async () => {
+    try {
+      const response = await fetch(`https://localhost:7071/api/Reports/GetReportsByOperatorReport`);
+
+      if (!response.ok) {
+        console.error('Failed to fetch reports. HTTP Status:', response.status);
+        return;
+      }
+
+      const data = await response.json();
+      setReports(data);
+
+    } catch (error) {
+      console.error('Error fetching reports:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReports();
+  }, []);
 
   let rowData;
-  const data = useMemo(() => [
-    { id: 1, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1Default Notes 1Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Jawwal", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 2, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 2\nDefault Notes\nDefault Notes', approved: 1, Month: 12, Year: 2023, telecomName: "Jawwal", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 3, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Jawwal", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 4, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 2, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 5, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 6, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Jawwal", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 7, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 8, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 9, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Jawwal", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 10, type: 'RBT', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 11, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 12, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 9, Year: 2023, telecomName: "Jawwal", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 13, type: 'PULL', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 14, type: 'RBT', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 15, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 10, Year: 2023, telecomName: "Jawwal", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 16, type: 'PULL', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Jawwal", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 17, type: 'DCB', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" },
-    { id: 18, type: 'PUSH', file: '/Users/mayar/desktop/SimpleSpreadsheet.xlsx', notes: 'Default Notes 1', approved: 1, Month: 12, Year: 2023, telecomName: "Ooredoo", status: "eeee", lastModified: "2023-12-1T5:30:00" }
-  ], []);
+
+  const data = useMemo(() => reports.map((report) => ({
+    id: report.id,
+    type: report.type,
+    file: report.file,
+    notes: report.notes.map(note => note.content).join('\n'),
+    approved: report.approved,
+    Month: report.month,
+    Year: report.year,
+    telecomName: report.telecomName,
+    status: report.status,
+  })), [reports]);
 
   rowData = data.find((item) => item.id === Number(id)) || {};
-
-  const [approved, setApproved] = useState(rowData ? (rowData.approved == 1) ? true : false : false);
-  const [selectedTelecom, setSelectedTelecom] = useState(rowData ? rowData.telecomName : '');
-  const [selectedReport, setSelectedReport] = useState(rowData ? rowData.type : '');
+  const [approved, setApproved] = useState((rowData != {}) ? (rowData.approved >= 6) ? true : false : false);
+  const [selectedTelecom, setSelectedTelecom] = useState((rowData != {}) ? rowData.telecomName : '');
+  const [selectedReport, setSelectedReport] = useState((rowData != {}) ? rowData.type : '');
   const [telecomError, setTelecomError] = useState("");
   const [reportError, setReportError] = useState("");
-  const [reportFile, setReportFile] = useState(rowData ? rowData.file : null);
-  const [imiReportFile, setImiReportFile] = useState(rowData ? rowData.file : null);
-  const [diffrenciesReportFile, setDiffrenciesReportFile] = useState(rowData ? rowData.file : null);
-  const [mwReportFile, setMwReportFile] = useState(rowData ? rowData.file : null);
-  const [refundReportFile, setRefundReportFile] = useState(rowData ? rowData.file : null);
+  const [reportFile, setReportFile] = useState((rowData != {}) ? rowData.file : null);
+  const [imiReportFile, setImiReportFile] = useState((rowData != {}) ? rowData.file : null);
+  const [diffrenciesReportFile, setDiffrenciesReportFile] = useState((rowData != {}) ? rowData.file : null);
+  const [mwReportFile, setMwReportFile] = useState((rowData != {}) ? rowData.file : null);
+  const [refundReportFile, setRefundReportFile] = useState((rowData != {}) ? rowData.file : null);
   const [reportFileError, setReportFileError] = useState("");
   const [selectedDateState, setSelectedDateState] = useState(new Date());
+  const [flag, setFlag] = useState(false);
+  const [imiFlag, setImiFlag] = useState(false);
+  const [refundFlag, setRefundFlag] = useState(false);
+  const [differenciesFlag, setDifferenciesFlag] = useState(false);
+  const [mwFlag, setMwFlag] = useState(false);
+  let year = '', month = '';
+  const [reportFileName, setReportFileName] = useState("");
+  const [imiFileName, setImiFileName] = useState("");
+  const [diffrenciesFileName, setDiffrenciesFileName] = useState("");
+  const [refundFileName, setRefundFileName] = useState("");
+  const [mwFileName, setMwFileName] = useState("");
+
+  useEffect(() => {
+    if (id !== ":id") {
+      setReportFileName(`ReportFile_${rowData.telecomName}_${rowData.type}_${rowData.Month}_${rowData.Year}.xlsx`);
+      setImiFileName(`ImiFile_${rowData.telecomName}_${rowData.type}_${rowData.Month}_${rowData.Year}.xlsx`);
+      setDiffrenciesFileName(`DiffrenciesFile_${rowData.telecomName}_${rowData.type}_${rowData.Month}_${rowData.Year}.xlsx`);
+      setRefundFileName(`RefundFile_${rowData.telecomName}_${rowData.type}_${rowData.Month}_${rowData.Year}.xlsx`);
+      setMwFileName(`MwFile_${rowData.telecomName}_${rowData.type}_${rowData.Month}_${rowData.Year}.xlsx`);
+    }
+  }, [rowData]);
 
   const handleDateChange = (dateInfo) => {
     setSelectedDateState(dateInfo);
@@ -73,6 +108,8 @@ const Form = () => {
   };
 
   const handleFileUpload = (file) => {
+    setReportFileError("");
+    setReportFileName("");
     setReportFile(file);
   };
 
@@ -102,36 +139,118 @@ const Form = () => {
     setSelectedReport(value);
   };
 
+  const getReportTypeId = async (reportTypeName) => {
+    try {
+      const response = await axios.get(`https://localhost:7071/api/ReportsTypes/GetReportTypeIdFromName?name=${reportTypeName}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching report type ID:', error);
+      throw error;
+    }
+  };
+
+  const getOperatorId = async (operatorName) => {
+    try {
+      const response = await axios.get(`https://localhost:7071/api/Operator/GetOperatorIdByCompanyName?name=${operatorName}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching Operator ID:', error);
+      throw error;
+    }
+  };
+
+  const fileToArrayBytes = (file) => {
+    return new Promise((resolve) => {
+      if (!file) {
+        resolve(null);
+      } else {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64String = btoa(
+            String.fromCharCode.apply(null, new Uint8Array(reader.result))
+          );
+          resolve(base64String);
+        };
+        reader.readAsArrayBuffer(file);
+      }
+    });
+  };
+
   const onSubmit = async (event) => {
     event.preventDefault();
     let hasError = false;
     const dateString = selectedDateState.toISOString().split('T')[0];
-    const [year, month] = dateString.split('-').map(Number);
-    console.log('jjjj', reportFile, selectedReport, approved, selectedTelecom, year, month, imiReportFile, diffrenciesReportFile, mwReportFile, refundReportFile);
+    [year, month] = dateString.split('-').map(Number);
+    console.log('hhhh', selectedTelecom, reportFileName);
 
-    if (!selectedTelecom) {
+    if (!selectedTelecom && (id == ":id")) {
       setTelecomError("Please select a telecom name");
       hasError = true;
     } else {
       setTelecomError("");
     }
-    if (!reportError) {
+
+    if (!selectedReport && (id == ":id")) {
       setReportError("Please select a report type");
       hasError = true;
     } else {
       setReportError("");
     }
-    if (reportFile == null) {
+
+    if (reportFile == null && (id == ":id")) {
       setReportFileError("Please select a report file");
       hasError = true;
-    } else {
+    }
+    else {
       setReportFileError("");
     }
 
     if (!hasError) {
-      setSelectedTelecom('');
-      setSelectedReport('');
-      setReportFile(null);
+      if (id == ":id") {
+        try {
+          const reportTypeId = await getReportTypeId(selectedReport);
+          const operatorId = await getOperatorId(selectedTelecom);
+          const reportFileBase64 = await fileToArrayBytes(reportFile);
+          const differencesFileBase64 = await fileToArrayBytes(diffrenciesReportFile);
+          const imiFileBase64 = await fileToArrayBytes(imiReportFile);
+          const mwFileBase64 = await fileToArrayBytes(mwReportFile);
+          const refundFileBase64 = await fileToArrayBytes(refundReportFile);
+          const response = await axios.post('https://localhost:7071/api/Reports/AddReport', {
+            "reportTypeId": reportTypeId,
+            "lastModified": new Date().toISOString(),
+            "approvalStatusID": 1,
+            "month": month,
+            "year": year,
+            "reportFile": reportFileBase64,
+            "operatorId": operatorId,
+            "imiFile": imiFileBase64,
+            "differencesFile": differencesFileBase64,
+            "mwFile": mwFileBase64,
+            "refundFile": refundFileBase64
+          });
+
+          console.log('API Response:', response.data);
+        } catch (error) {
+          console.error('Error submitting report:', error);
+        }
+        setSelectedTelecom('');
+        setSelectedReport('');
+        setReportFile(null);
+        setApproved(false);
+        setFlag(true);
+        setImiFlag(true);
+        setRefundFlag(true);
+        setMwFlag(true);
+        setDifferenciesFlag(true);
+
+        setTimeout(() => {
+          setFlag(false);
+          setImiFlag(false);
+          setRefundFlag(false);
+          setMwFlag(false);
+          setDifferenciesFlag(false);
+        }, 200);
+      }
     }
   };
 
@@ -160,7 +279,7 @@ const Form = () => {
                     <DropdownList
                       selectedTypes={selectedTypes}
                       placeholder={'Choose telecom name'}
-                      value={rowData ? rowData.telecomName : selectedTelecom}
+                      value={(Object.keys(rowData).length > 0) ? rowData.telecomName : selectedTelecom}
                       onChange={handleTelecomDropdownChange}
                     />
                   </Box>
@@ -182,7 +301,7 @@ const Form = () => {
                     </Box>
                   )}
                   <Box sx={{ width: "fit-content" }}>
-                    <FileUpload image={UploadFile} allowedExtensions={['xlsx']} onUpload={handleFileUpload} />
+                    <FileUpload image={UploadFile} allowedExtensions={['xlsx']} onUpload={handleFileUpload} flag={flag} reportFileName={reportFileName} />
                   </Box>
                 </Box>
               </FormSection>
@@ -205,7 +324,7 @@ const Form = () => {
                     <DropdownList
                       selectedTypes={reportTypes}
                       placeholder={'Choose report type'}
-                      value={rowData ? rowData.type : selectedReport}
+                      value={(Object.keys(rowData).length > 0) ? rowData.type : selectedReport}
                       onChange={handleReportDropdownChange}
                     />
                   </Box>
@@ -214,7 +333,7 @@ const Form = () => {
 
               {/* IMI File */}
               <FormSection title="IMI File">
-                <FileUpload image={ImiFile} allowedExtensions={['xlsx']} onUpload={handleImiFileUpload} />
+                <FileUpload image={ImiFile} allowedExtensions={['xlsx']} onUpload={handleImiFileUpload} flag={imiFlag} reportFileName={imiFileName}/>
               </FormSection>
 
               {/* Date */}
@@ -226,17 +345,17 @@ const Form = () => {
 
               {/* Refund File */}
               <FormSection title="Refund File">
-                <FileUpload image={RefundFile} allowedExtensions={['xlsx']} onUpload={handleRefundFileUpload} />
+                <FileUpload image={RefundFile} allowedExtensions={['xlsx']} onUpload={handleRefundFileUpload} flag={refundFlag} reportFileName={refundFileName} />
               </FormSection>
 
               {/* Differencies File */}
               <FormSection title="Differencies File">
-                <FileUpload image={DifferenciesFile} allowedExtensions={['xlsx']} onUpload={handleDiffrenciesFileUpload} />
+                <FileUpload image={DifferenciesFile} allowedExtensions={['xlsx']} onUpload={handleDiffrenciesFileUpload} flag={differenciesFlag} reportFileName={diffrenciesFileName} />
               </FormSection>
 
               {/* MW File */}
               <FormSection title="MW File">
-                <FileUpload image={MWFile} allowedExtensions={['xlsx']} onUpload={handleMwFileUpload} />
+                <FileUpload image={MWFile} allowedExtensions={['xlsx']} onUpload={handleMwFileUpload} flag={mwFlag} reportFileName={mwFileName} />
               </FormSection>
 
               {/* Approved */}
@@ -250,7 +369,7 @@ const Form = () => {
 
               {/* Notes */}
               <FormSection title="Notes*">
-                <NoteButton value={rowData ? rowData.notes : ''} />
+                <Note value={(Object.keys(rowData).length > 0) ? rowData.notes : ''} />
               </FormSection>
 
               {/* Save Button */}

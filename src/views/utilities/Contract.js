@@ -11,7 +11,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import FileUpload from 'ui-component/extended/FileUpload';
 import ContractFile from 'assets/images/icons/contractfile.png';
-import NoteButton from 'ui-component/extended/NoteButton';
+import Note from 'ui-component/extended/Note';
 import CurrentDatePicker from 'ui-component/extended/CurrentDatePicker';
 
 // ===============================|| COLOR BOX ||=============================== //
@@ -79,8 +79,10 @@ const UIColor = () => {
   const [clientShareError, setClientShareError] = useState('');
   const [reportFile, setReportFile] = useState(null);
   const [reportFileError, setReportFileError] = useState("");
+  const [flag, setFlag]=useState(false);
 
   const handleFileUpload = (file) => {
+    setReportFileError("");
     setReportFile(file);
   };
 
@@ -129,8 +131,14 @@ const UIColor = () => {
     if (!hasError) {
       setMerchantValue('');
       setReportFile(null);
+      setClientShareValue('');
+      setFlag(true);
+      setTimeout(() => {
+        setFlag(false);
+      }, 200);
     }
   };
+
   return (
     <MainCard title="Upload Contracts">
       <Grid container spacing={gridSpacing}>
@@ -173,9 +181,10 @@ const UIColor = () => {
                         {reportFileError}
                       </Box>
                     )}
-                    <FileUpload image={ContractFile} allowedExtensions={['pdf']} onUpload={handleFileUpload} />
+                    <FileUpload image={ContractFile} allowedExtensions={['pdf']} onUpload={handleFileUpload} flag={flag}/>
                   </Box>
-                </FormSection>            </Grid>
+                </FormSection>            
+                </Grid>
               <Grid item xs={12} sm={6} md={4} lg={6}>
                 <FormSection title="Client Share">
                   {clientShareError && (
@@ -204,7 +213,7 @@ const UIColor = () => {
               </Grid>
               <Grid item xs={12} sm={6} md={4} lg={11}>
                 <FormSection title="Notes*">
-                  <NoteButton />
+                  <Note />
                 </FormSection>
               </Grid>
               <Grid item xs={12} sm={6} md={4} lg={12}>
