@@ -1,12 +1,13 @@
 // assets
-import { IconUpload, IconBookUpload, IconShadow, IconWindmill } from '@tabler/icons';
+import { IconUpload, IconBookUpload, IconShadow, IconWindmill, IconTransform } from '@tabler/icons';
 
 // constant
 const icons = {
   IconUpload,
   IconBookUpload,
   IconShadow,
-  IconWindmill
+  IconWindmill,
+  IconTransform
 };
 
 // ==============================|| UTILITIES MENU ITEMS ||============================== //
@@ -54,6 +55,14 @@ const utilities = {
       type: 'item',
       url: '/utils/util-uploadInvoice',
       icon: icons.IconUpload,
+      breadcrumbs: false
+    },
+    {
+      id: 'util-convertFileFormat',
+      title: 'Convert File Format',
+      type: 'item',
+      url: '/utils/util-convertFileFormat',
+      icon: icons.IconTransform,
       breadcrumbs: false
     },
     {

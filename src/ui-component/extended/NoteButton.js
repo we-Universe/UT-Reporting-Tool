@@ -6,13 +6,13 @@ const NoteButton = ({ notes, onChange }) => {
   const [currentNotes, setCurrentNotes] = useState(notes);
 
   const addNote = () => {
-    setCurrentNotes((prevNotes) => [...prevNotes, { text: '' }]);
+    setCurrentNotes((prevNotes) => [...prevNotes, { Content: '' }]);
   };
 
-  const handleNoteChange = (index, text) => {
+  const handleNoteChange = (index, Content) => {
     setCurrentNotes((prevNotes) => {
       const updatedNotes = [...prevNotes];
-      updatedNotes[index] = { ...updatedNotes[index], text };
+      updatedNotes[index] = { ...updatedNotes[index], Content };
       return updatedNotes;
     });
     onChange([...currentNotes]);

@@ -13,6 +13,7 @@ const UtilsServiceInfo = Loadable(lazy(() => import('views/utilities/ServicesInf
 const UtilsMerchantInfo = Loadable(lazy(() => import('views/utilities/MerchantInfo')));
 const UtilsMaterialIcons = Loadable(lazy(() => import('views/utilities/MaterialIcons')));
 const UtilsUploadInvoice = Loadable(lazy(() => import('views/utilities/UploadInvoice')));
+const UtilsConvertFileFormat = Loadable(lazy(() => import('views/utilities/ConvertFileFormat')));
 const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons')));
 const AddUserPage = Loadable(lazy(() => import('views/adduser-page')));
 
@@ -87,6 +88,15 @@ const MainRoutes = {
         {
           path: 'util-uploadInvoice',
           element: <UtilsUploadInvoice />
+        }
+      ]
+    },
+    {
+      path: 'utils',
+      children: [
+        {
+          path: 'util-convertFileFormat',
+          element: <UtilsConvertFileFormat />
         }
       ]
     },

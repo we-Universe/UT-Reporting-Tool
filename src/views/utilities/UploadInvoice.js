@@ -41,42 +41,25 @@ const UploadFileContainer = styled(Box)({
 
 const UploadInvoice = () => {
   const [invoiceReportInfo, setInvoiceReportInfo] = useState({
-    telecomName: 0,
+    operatorId: 0,
     billingDate: null,
-    status: 0,
-    invoiceYear: 0,
-    invoiceMonth: 0,
+    invoiceStatusID: 0,
+    year: 0,
+    month: 0,
     totalAmount: 0,
     paymentDate: null,
-    invoiceFile: [],
-    swiftFile: [],
-    receiptFile: [],
-    notes: []
+    invoiceFile: '',
+    swiftFile: '',
+    receiptFile: '',
+    invoiceNotes: []
   });
 
-  //const apiUrl = config.reportingAPIUrls.url;
-
-  // const handleInvoiceSubmit = async () => {
-  //   try {
-  //     const response = await axios.post(`https://localhost:7071/api/Invoice/AddInvoiceReport`, invoiceReportInfo);
-  //     console.log('Post created:', response.data);
-  //   } catch (error) {
-  //     console.error('Error creating post:', error);
-  //     console.log('Server response:', error.response);
-  //     console.log('Request payload:', error.config.data); // Log the exact payload sent to the server
-  //   }
-  //   console.log(invoiceReportInfo);
-  // };
-
   const handleInvoiceSubmit = async () => {
+    console.log(invoiceReportInfo);
     try {
-      const response = await axios.post(
-        `https://localhost:7071/api/Invoice/AddInvoiceReport`,
-        { invoiceModel: invoiceReportInfo },
-        {
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
+      const response = await axios.post(`https://localhost:7071/api/Invoice/AddInvoiceReport`, invoiceReportInfo, {
+        headers: { 'Content-Type': 'application/json' }
+      });
       console.log('Post created:', response.data);
     } catch (error) {
       console.error('Error creating post:', error);
@@ -93,8 +76,8 @@ const UploadInvoice = () => {
       } else {
         const reader = new FileReader();
         reader.onload = () => {
-          const fileData = new Uint8Array(reader.result);
-          resolve(fileData);
+          const base64String = btoa(String.fromCharCode.apply(null, new Uint8Array(reader.result)));
+          resolve(base64String);
         };
         reader.readAsArrayBuffer(file);
       }
@@ -103,8 +86,7 @@ const UploadInvoice = () => {
 
   const handleInvoiceFileUpload = async (file) => {
     const invoiceFileData = await fileToArrayBytes(file);
-    //setInvoiceReportInfo({ ...invoiceReportInfo, invoiceFile: invoiceFileData });
-    setInvoiceReportInfo({ ...invoiceReportInfo, invoiceFile: Array.from(invoiceFileData) });
+    setInvoiceReportInfo({ ...invoiceReportInfo, invoiceFile: invoiceFileData });
   };
 
   const handleSwiftFileUpload = async (file) => {
@@ -118,7 +100,7 @@ const UploadInvoice = () => {
   };
 
   const handleNoteChange = (updatedNotes) => {
-    setInvoiceReportInfo({ ...invoiceReportInfo, notes: updatedNotes });
+    setInvoiceReportInfo({ ...invoiceReportInfo, invoiceNotes: updatedNotes });
   };
 
   return (
@@ -130,28 +112,31 @@ const UploadInvoice = () => {
               variant="outlined"
               sx={{ width: '100%', marginBottom: '20px' }}
               value={invoiceReportInfo.totalAmount}
-              onChange={(event) => setInvoiceReportInfo({ ...invoiceReportInfo, totalAmount: event.target.value })}
+              onChange={(event) => {
+                const intValue = parseInt(event.target.value, 10);
+                setInvoiceReportInfo({ ...invoiceReportInfo, totalAmount: isNaN(intValue) ? '' : intValue });
+              }}
             />
           </FormSection>
           <FormSection title="Select Telecom Name">
             <FormControl sx={{ width: '100%', marginBottom: '20px' }}>
               <Select
-                value={invoiceReportInfo.telecomName}
-                onChange={(event) => setInvoiceReportInfo({ ...invoiceReportInfo, telecomName: event.target.value })}
+                value={invoiceReportInfo.operatorId}
+                onChange={(event) => setInvoiceReportInfo({ ...invoiceReportInfo, operatorId: event.target.value })}
               >
-                <MenuItem value="1">Jawwal</MenuItem>
-                <MenuItem value="2">Ooredoo</MenuItem>
+                <MenuItem value={1}>Jawwal</MenuItem>
+                <MenuItem value={2}>Ooredoo</MenuItem>
               </Select>
             </FormControl>
           </FormSection>
           <FormSection title="Select Invoice Status">
             <FormControl sx={{ width: '100%', marginBottom: '20px' }}>
               <Select
-                value={invoiceReportInfo.status}
-                onChange={(event) => setInvoiceReportInfo({ ...invoiceReportInfo, status: event.target.value })}
+                value={invoiceReportInfo.invoiceStatusID}
+                onChange={(event) => setInvoiceReportInfo({ ...invoiceReportInfo, invoiceStatusID: event.target.value })}
               >
-                <MenuItem value="1">Billed</MenuItem>
-                <MenuItem value="2">unbilled</MenuItem>
+                <MenuItem value={1}>Billed</MenuItem>
+                <MenuItem value={2}>unbilled</MenuItem>
               </Select>
             </FormControl>
           </FormSection>
@@ -166,8 +151,8 @@ const UploadInvoice = () => {
 
                     setInvoiceReportInfo({
                       ...invoiceReportInfo,
-                      invoiceMonth: selectedMonth,
-                      invoiceYear: selectedYear
+                      month: selectedMonth,
+                      year: selectedYear
                     });
                   }
                 }}
@@ -213,7 +198,7 @@ const UploadInvoice = () => {
           </FormSection>
 
           <FormSection title="Notes">
-            <NoteButton notes={invoiceReportInfo.notes} onChange={handleNoteChange} />
+            <NoteButton notes={invoiceReportInfo.invoiceNotes} onChange={handleNoteChange} />
           </FormSection>
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', marginBottom: '20px' }}>
