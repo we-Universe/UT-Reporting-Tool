@@ -16,7 +16,6 @@ import SubCard from '../../../ui-component/cards/SubCard';
 import MainCard from '../../../ui-component/cards/MainCard';
 import logo from 'assets/images/icons/excel.png';
 import DropdownList from '../../../ui-component/extended/DropdownList';
-import { merchantName } from '../../../store/typesData';
 import EditButton from '../../../ui-component/EditButton/EditButton';
 import SaveButton from '../../../ui-component/SaveButton/SaveButton';
 import MerchantImage from '../../../assets/images/icons/seller.png';
@@ -85,6 +84,7 @@ const PopularCard = () => {
   const [viewAll, setViewAll] = useState(false);
   const [reports, setReports] = useState([]);
   const [reportTypes, setReportTypes] = useState([]);
+  const [merchant, setMerchant] = useState([]);
 
   const fetchReports = async () => {
     try {
@@ -121,9 +121,28 @@ const PopularCard = () => {
     }
   };
 
+  const fetchMerchantNames = async () => {
+    try {
+      const response = await fetch(`https://localhost:7071/api/Merchant/GetAllMerchantNames`);
+
+      if (!response.ok) {
+        console.error('Failed to fetch reports. HTTP Status:', response.status);
+        return;
+      }
+
+      const data = await response.json();
+      console.log('Fetched merchant names:', data);
+      setMerchant(data);
+
+    } catch (error) {
+      console.error('Error fetching reports:', error);
+    }
+  };
+
   useEffect(() => {
-    fetchReports(); 
+    fetchReports();
     fetchReportTypes();
+    fetchMerchantNames();
   }, []);
 
   const data = useMemo(() => reports.map((report) => ({
@@ -221,7 +240,7 @@ const PopularCard = () => {
           sx={{ color: "#0B3782", "& fieldset": { border: 'none' } }}
           disabled={!editableRows.has(row.id)}
         >
-          {merchantName.map((merchantName) => (
+          {merchant.map((merchantName) => (
             <MenuItem key={merchantName} value={merchantName}>
               {merchantName}
             </MenuItem>
@@ -363,7 +382,7 @@ const PopularCard = () => {
       <MainCard title={<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span>Reports History</span>
         <DropdownList
-          selectedTypes={merchantName}
+          selectedTypes={merchant}
           placeholder={'Choose merchant name'}
           value={selectedMerchantName}
           onChange={handleMerchantDropdownChange}
