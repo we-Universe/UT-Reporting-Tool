@@ -16,6 +16,7 @@ const UtilsUploadInvoice = Loadable(lazy(() => import('views/utilities/UploadInv
 const UtilsConvertFileFormat = Loadable(lazy(() => import('views/utilities/ConvertFileFormat')));
 const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons')));
 const AddUserPage = Loadable(lazy(() => import('views/adduser-page')));
+const UtilsRevenues = Loadable(lazy(() => import('views/utilities/Revenues')));
 
 // Main Application Routes Configuration
 const MainRoutes = {
@@ -121,6 +122,15 @@ const MainRoutes = {
     {
       path: 'adduser-page',
       element: <AddUserPage />
+    },
+    {
+      path: 'utils',
+      children: [
+        {
+          path: 'util-revenues',
+          element: <UtilsRevenues />
+        }
+      ]
     }
   ]
 };

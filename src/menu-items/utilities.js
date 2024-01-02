@@ -1,13 +1,15 @@
 // assets
-import { IconUpload, IconBookUpload, IconShadow, IconWindmill, IconTransform } from '@tabler/icons';
+import { IconUpload, IconBookUpload, IconReportSearch, IconWindmill, IconTransform, IconZoomMoney, IconBuildingStore } from '@tabler/icons';
 
 // constant
 const icons = {
   IconUpload,
   IconBookUpload,
-  IconShadow,
   IconWindmill,
-  IconTransform
+  IconTransform,
+  IconZoomMoney,
+  IconReportSearch,
+  IconBuildingStore
 };
 
 // ==============================|| UTILITIES MENU ITEMS ||============================== //
@@ -38,7 +40,7 @@ const utilities = {
       title: 'Services Info',
       type: 'item',
       url: '/utils/util-servicesInfo',
-      icon: icons.IconShadow,
+      icon: icons.IconReportSearch,
       breadcrumbs: false
     },
     {
@@ -46,7 +48,7 @@ const utilities = {
       title: 'Merchant Info',
       type: 'item',
       url: '/utils/util-merchantInfo',
-      icon: icons.IconShadow,
+      icon: icons.IconBuildingStore,
       breadcrumbs: false
     },
     {
@@ -66,28 +68,12 @@ const utilities = {
       breadcrumbs: false
     },
     {
-      id: 'icons',
-      title: 'Icons',
-      type: 'collapse',
-      icon: icons.IconWindmill,
-      children: [
-        {
-          id: 'tabler-icons',
-          title: 'Tabler Icons',
-          type: 'item',
-          url: '/icons/tabler-icons',
-          breadcrumbs: false
-        },
-        {
-          id: 'material-icons',
-          title: 'Material Icons',
-          type: 'item',
-          external: true,
-          target: '_blank',
-          url: 'https://mui.com/material-ui/material-icons/',
-          breadcrumbs: false
-        }
-      ]
+      id: 'util-revenues',
+      title: 'Revenues',
+      type: 'item',
+      url: '/utils/util-revenues',
+      icon: icons.IconZoomMoney,
+      breadcrumbs: false
     }
   ]
 };

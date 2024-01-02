@@ -29,7 +29,7 @@ const Form = () => {
   const { id } = useParams();
   const [reports, setReports] = useState([]);
   const [reportTypes, setReportTypes] = useState([]);
-  
+
   const fetchReports = async () => {
     try {
       const response = await fetch(`https://localhost:7071/api/Reports/GetReportsByOperatorReport`);
@@ -111,26 +111,6 @@ const Form = () => {
   const [diffrenciesFileName, setDiffrenciesFileName] = useState("");
   const [refundFileName, setRefundFileName] = useState("");
   const [mwFileName, setMwFileName] = useState("");
-  const [fileChange, setFileChange] = useState(false);
-  const [imiFileChange, setImiFileChange] = useState(false);
-  const [differenciesFileChange, setDifferenciesFileChange] = useState(false);
-  const [refundFileChange, setRefundFileChange] = useState(false);
-  const [mwFileChange, setMwFileChange] = useState(false);
-
-  useEffect(() => {
-    if (Object.keys(rowData).length > 0) {
-      setSelectedTelecom(rowData.telecomName);
-      setSelectedReport(rowData.type);
-      setReportFile(rowData.file);
-      setImiReportFile(rowData.imiFile);
-      setDiffrenciesReportFile(rowData.differenciesFile);
-      setMwReportFile(rowData.mwFile);
-      setRefundReportFile(rowData.refundFile);
-      if (rowData.approved >= 6) {
-        setApproved(true);
-      }
-    }
-  }, [rowData]);
 
   useEffect(() => {
     if (id !== ":id") {
@@ -140,7 +120,7 @@ const Form = () => {
       setRefundFileName(`RefundFile_${rowData.telecomName}_${rowData.type}_${rowData.Month}_${rowData.Year}.xlsx`);
       setMwFileName(`MwFile_${rowData.telecomName}_${rowData.type}_${rowData.Month}_${rowData.Year}.xlsx`);
     }
-  }, [rowData]);
+  }, [id]);
 
   const handleDateChange = (dateInfo) => {
     setSelectedDateState(dateInfo);
@@ -154,27 +134,22 @@ const Form = () => {
     setReportFileError("");
     setReportFileName("");
     setReportFile(file);
-    setFileChange(true);
   };
 
   const handleImiFileUpload = (file) => {
     setImiReportFile(file);
-    setImiFileChange(true);
   };
 
   const handleMwFileUpload = (file) => {
     setMwReportFile(file);
-    setMwFileChange(true);
   };
 
   const handleRefundFileUpload = (file) => {
     setRefundReportFile(file);
-    setRefundFileChange(true);
   };
 
   const handleDiffrenciesFileUpload = (file) => {
     setDiffrenciesReportFile(file);
-    setDifferenciesFileChange(true);
   };
 
   const handleTelecomDropdownChange = (value) => {
@@ -186,6 +161,22 @@ const Form = () => {
     setReportError("");
     setSelectedReport(value);
   };
+
+
+  useEffect(() => {
+    if (Object.keys(rowData).length > 0) {
+      setSelectedTelecom(rowData.telecomName);
+      setSelectedReport(rowData.type);
+      handleFileUpload(rowData.file);
+      handleImiFileUpload(rowData.imiFile);
+      handleDiffrenciesFileUpload(rowData.differenciesFile);
+      handleMwFileUpload(rowData.mwFile);
+      handleRefundFileUpload(rowData.refundFile);
+      if (rowData.approved >= 6) {
+        setApproved(true);
+      }
+    }
+  }, [rowData]);
 
   const getReportTypeId = async (reportTypeName) => {
     try {
@@ -212,14 +203,21 @@ const Form = () => {
       if (!file) {
         resolve(null);
       } else {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const base64String = btoa(
-            String.fromCharCode.apply(null, new Uint8Array(reader.result))
-          );
-          resolve(base64String);
-        };
-        reader.readAsArrayBuffer(file);
+        if (file instanceof Blob || file instanceof File) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const base64String = btoa(
+              String.fromCharCode.apply(null, new Uint8Array(reader.result))
+            );
+            resolve(base64String);
+          };
+          reader.readAsArrayBuffer(file);
+        } else if (typeof file === 'string') {
+          resolve(file);
+        } else {
+          console.error('Error: The provided file is not a valid Blob, File, or base64 string.');
+          resolve(null);
+        }
       }
     });
   };
@@ -299,14 +297,13 @@ const Form = () => {
       }
       else {
         try {
-
           const reportTypeId = await getReportTypeId(selectedReport);
           const operatorId = await getOperatorId(selectedTelecom);
-          let reportFileBase64 = fileChange ? await fileToArrayBytes(reportFile) : reportFile;
-          let imiFileBase64 = imiFileChange ? await fileToArrayBytes(imiReportFile) : imiReportFile;
-          let differencesFileBase64 = differenciesFileChange ? await fileToArrayBytes(diffrenciesReportFile) : diffrenciesReportFile;
-          let mwFileBase64 = mwFileChange ? await fileToArrayBytes(mwReportFile) : mwReportFile;
-          let refundFileBase64 = refundFileChange ? await fileToArrayBytes(refundReportFile) : refundReportFile;
+          let reportFileBase64 = await fileToArrayBytes(reportFile);
+          let imiFileBase64 = await fileToArrayBytes(imiReportFile);
+          let differencesFileBase64 = await fileToArrayBytes(diffrenciesReportFile);
+          let mwFileBase64 = await fileToArrayBytes(mwReportFile);
+          let refundFileBase64 = await fileToArrayBytes(refundReportFile);
 
           const apiUrl = `https://localhost:7071/api/Reports/EditReport?id=${id}`;
           const response = await axios.put(apiUrl, {
