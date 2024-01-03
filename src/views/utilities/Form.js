@@ -290,6 +290,7 @@ const Form = () => {
         setReportFile(null);
         setApproved(false);
         setFlag(true);
+        setNotes([]);
         setImiFlag(true);
         setRefundFlag(true);
         setMwFlag(true);

@@ -165,6 +165,7 @@ const UIColor = () => {
         setMerchantValue('');
         setReportFile(null);
         setClientShareValue('');
+        setNotes([]);
         setFlag(true);
         setTimeout(() => {
           setFlag(false);
