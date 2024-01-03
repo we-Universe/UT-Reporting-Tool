@@ -8,6 +8,7 @@ import MainCard from '../../ui-component/cards/MainCard';
 import FileUpload from 'ui-component/extended/FileUpload';
 import UploadFile from 'assets/images/icons/financial-reporting.png';
 import StatusImage from 'assets/images/icons/icon_revenue.gif';
+import RevenuesImage from 'assets/images/icons/revenues.gif';
 import axios from 'axios';
 
 const Revenues = () => {
@@ -39,7 +40,7 @@ const Revenues = () => {
                     return Math.min(prevProgress + 1, 100);
                 }
             });
-        }, 1000);
+        }, 1050);
     };
 
     const onSubmit = async (event) => {
@@ -86,6 +87,10 @@ const Revenues = () => {
             }
         }
     };
+
+    const processingMessage = progress === 100
+        ? 'Processing file is done. Please wait a few more seconds...'
+        : `${progress}%`
 
     return (
         <Box>
@@ -140,7 +145,8 @@ const Revenues = () => {
                         {loading &&
                             <>
                                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                    <Typography variant="body2" ml={1}>{`${progress}%`}</Typography>
+                                    <img src={RevenuesImage} alt="User Status" style={{ marginRight: '0px', width: '24px', height: '24px' }} />
+                                    <Typography variant="body2" ml={1}>{processingMessage}</Typography>
                                 </Box>
                                 <LinearProgress color="primary" value={progress} />
                             </>

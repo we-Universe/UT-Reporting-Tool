@@ -82,6 +82,11 @@ const UIColor = () => {
   const [reportFile, setReportFile] = useState(null);
   const [reportFileError, setReportFileError] = useState("");
   const [flag, setFlag] = useState(false);
+  const [notes, setNotes] = useState([]);
+
+  const handleNoteChange = (newNotes) => {
+    setNotes(newNotes);
+  };
 
   const handleFileUpload = (file) => {
     setReportFileError("");
@@ -145,13 +150,14 @@ const UIColor = () => {
 
     if (!hasError) {
       const apiUrl = 'https://localhost:7071/api/Contract/AddContract';
+      const notesString = notes.map(note => note.content).join(' ');
       try {
         const reportFileBase64 = await convertFileToBase64(reportFile);
         const response = await axios.post(apiUrl, {
           merchantName: merchantValue,
           clientShare: parseFloat(clientShareValue),
           contractFile: reportFileBase64,
-          notes: 'ggg',
+          notes: notesString,
           date: selectedDateState.toISOString(),
         });
 
@@ -243,7 +249,7 @@ const UIColor = () => {
               </Grid>
               <Grid item xs={12} sm={6} md={4} lg={11}>
                 <FormSection title="Notes*">
-                  <Note />
+                <Note notes={notes} onChange={handleNoteChange} />
                 </FormSection>
               </Grid>
               <Grid item xs={12} sm={6} md={4} lg={12}>

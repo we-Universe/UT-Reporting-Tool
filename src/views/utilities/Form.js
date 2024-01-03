@@ -79,7 +79,7 @@ const Form = () => {
     refundFile: report.refundFile,
     differenciesFile: report.differenciesFile,
     imiFile: report.imiFile,
-    notes: report.notes.map(note => note.content).join('\n'),
+    notes: report.notes,
     approved: report.approved,
     Month: report.month,
     Year: report.year,
@@ -111,6 +111,11 @@ const Form = () => {
   const [diffrenciesFileName, setDiffrenciesFileName] = useState("");
   const [refundFileName, setRefundFileName] = useState("");
   const [mwFileName, setMwFileName] = useState("");
+  const [notes, setNotes] = useState([]);
+
+  const handleNoteChange = (newNotes) => {
+    setNotes(newNotes);
+  };
 
   useEffect(() => {
     if (id !== ":id") {
@@ -167,6 +172,7 @@ const Form = () => {
     if (Object.keys(rowData).length > 0) {
       setSelectedTelecom(rowData.telecomName);
       setSelectedReport(rowData.type);
+      setNotes(rowData.notes);
       handleFileUpload(rowData.file);
       handleImiFileUpload(rowData.imiFile);
       handleDiffrenciesFileUpload(rowData.differenciesFile);
@@ -271,7 +277,8 @@ const Form = () => {
             "imiFile": imiFileBase64,
             "differencesFile": differencesFileBase64,
             "mwFile": mwFileBase64,
-            "refundFile": refundFileBase64
+            "refundFile": refundFileBase64,
+            "Notes": notes
           });
 
           console.log('API Response:', response.data);
@@ -304,7 +311,9 @@ const Form = () => {
           let differencesFileBase64 = await fileToArrayBytes(diffrenciesReportFile);
           let mwFileBase64 = await fileToArrayBytes(mwReportFile);
           let refundFileBase64 = await fileToArrayBytes(refundReportFile);
-
+          let newNotes = notes;
+          const existingNotes = notes.map((note) => note.content);
+          newNotes = notes.filter((note) => !existingNotes.includes(note.content));
           const apiUrl = `https://localhost:7071/api/Reports/EditReport?id=${id}`;
           const response = await axios.put(apiUrl, {
             "id": id,
@@ -318,7 +327,8 @@ const Form = () => {
             "imiFile": imiFileBase64,
             "differencesFile": differencesFileBase64,
             "mwFile": mwFileBase64,
-            "refundFile": refundFileBase64
+            "refundFile": refundFileBase64,
+            "Notes": newNotes
           });
           console.log('API Response:', response.data);
         } catch (error) {
@@ -449,7 +459,7 @@ const Form = () => {
 
               {/* Notes */}
               <FormSection title="Notes*">
-                <Note value={(Object.keys(rowData).length > 0) ? rowData.notes : ''} />
+                <Note notes={notes} onChange={handleNoteChange} />
               </FormSection>
 
               {/* Save Button */}
