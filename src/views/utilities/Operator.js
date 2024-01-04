@@ -15,7 +15,7 @@ import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 import SubCard from '../../ui-component/cards/SubCard';
 import MainCard from '../../ui-component/cards/MainCard';
 import DropdownList from '../../ui-component/extended/DropdownList';
-import { reportTypes, selectedTypes } from '../../store/typesData';
+import { selectedTypes } from '../../store/typesData';
 import EditButton from '../../ui-component/EditButton/EditButton';
 import TelecomImage from '../../assets/images/icons/telecommunication.png';
 import NoteImage from '../../assets/images/icons/pencil.png';
@@ -45,6 +45,7 @@ const Operator = () => {
   const [selectedTelecomName, setSelectedTelecomName] = useState('');
   const navigate = useNavigate();
   const [reports, setReports] = useState([]);
+  const [reportTypes, setReportTypes] = useState([]);
 
   const fetchReports = async () => {
     try {
@@ -64,8 +65,27 @@ const Operator = () => {
     }
   };
 
+  const fetchReportTypes = async () => {
+    try {
+      const response = await fetch(`https://localhost:7071/api/ReportsTypes/GetAllReportTypeNames`);
+
+      if (!response.ok) {
+        console.error('Failed to fetch reports. HTTP Status:', response.status);
+        return;
+      }
+
+      const data = await response.json();
+      console.log('Fetched reports:', data);
+      setReportTypes(data);
+
+    } catch (error) {
+      console.error('Error fetching reports:', error);
+    }
+  };
+
   useEffect(() => {
     fetchReports();
+    fetchReportTypes();
   }, []);
 
   const handleEditClick = (rowId) => {

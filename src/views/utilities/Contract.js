@@ -14,6 +14,8 @@ import ContractFile from 'assets/images/icons/contractfile.png';
 import Note from 'ui-component/extended/Note';
 import CurrentDatePicker from 'ui-component/extended/CurrentDatePicker';
 
+import axios from 'axios';
+
 // ===============================|| COLOR BOX ||=============================== //
 
 const ColorBox = ({ bgcolor, title, data, dark }) => (
@@ -79,7 +81,12 @@ const UIColor = () => {
   const [clientShareError, setClientShareError] = useState('');
   const [reportFile, setReportFile] = useState(null);
   const [reportFileError, setReportFileError] = useState("");
-  const [flag, setFlag]=useState(false);
+  const [flag, setFlag] = useState(false);
+  const [notes, setNotes] = useState([]);
+
+  const handleNoteChange = (newNotes) => {
+    setNotes(newNotes);
+  };
 
   const handleFileUpload = (file) => {
     setReportFileError("");
@@ -100,12 +107,25 @@ const UIColor = () => {
     setSelectedDateState(dateInfo);
   };
 
+  const convertFileToBase64 = async (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+  
+      reader.onload = () => {
+        resolve(reader.result.split(',')[1]); 
+      };
+  
+      reader.onerror = (error) => {
+        reject(error);
+      };
+  
+      reader.readAsDataURL(file);
+    });
+  };
+
   const onSubmit = async (event) => {
     event.preventDefault();
     let hasError = false;
-    const dateString = selectedDateState.toISOString().split('T')[0];
-    const [year, month] = dateString.split('-').map(Number);
-    console.log('jjjj', reportFile, year, month, merchantValue);
 
     if (!merchantValue) {
       setMerchantError("Please type a merchant name");
@@ -129,13 +149,30 @@ const UIColor = () => {
     }
 
     if (!hasError) {
-      setMerchantValue('');
-      setReportFile(null);
-      setClientShareValue('');
-      setFlag(true);
-      setTimeout(() => {
-        setFlag(false);
-      }, 200);
+      const apiUrl = 'https://localhost:7071/api/Contract/AddContract';
+      const notesString = notes.map(note => note.content).join(' ');
+      try {
+        const reportFileBase64 = await convertFileToBase64(reportFile);
+        const response = await axios.post(apiUrl, {
+          merchantName: merchantValue,
+          clientShare: parseFloat(clientShareValue),
+          contractFile: reportFileBase64,
+          notes: notesString,
+          date: selectedDateState.toISOString(),
+        });
+
+        console.log('API Response:', response.data);
+        setMerchantValue('');
+        setReportFile(null);
+        setClientShareValue('');
+        setNotes([]);
+        setFlag(true);
+        setTimeout(() => {
+          setFlag(false);
+        }, 200);
+      } catch (error) {
+        console.error('Error submitting contract:', error);
+      }
     }
   };
 
@@ -181,10 +218,10 @@ const UIColor = () => {
                         {reportFileError}
                       </Box>
                     )}
-                    <FileUpload image={ContractFile} allowedExtensions={['pdf']} onUpload={handleFileUpload} flag={flag}/>
+                    <FileUpload image={ContractFile} allowedExtensions={['pdf']} onUpload={handleFileUpload} flag={flag} />
                   </Box>
-                </FormSection>            
-                </Grid>
+                </FormSection>
+              </Grid>
               <Grid item xs={12} sm={6} md={4} lg={6}>
                 <FormSection title="Client Share">
                   {clientShareError && (
@@ -213,7 +250,7 @@ const UIColor = () => {
               </Grid>
               <Grid item xs={12} sm={6} md={4} lg={11}>
                 <FormSection title="Notes*">
-                  <Note />
+                <Note notes={notes} onChange={handleNoteChange} />
                 </FormSection>
               </Grid>
               <Grid item xs={12} sm={6} md={4} lg={12}>
