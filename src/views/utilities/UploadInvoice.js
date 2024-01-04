@@ -66,7 +66,6 @@ const UploadInvoice = () => {
       console.log('Server response:', error.response);
       console.log('Request payload:', JSON.stringify(invoiceReportInfo));
     }
-    console.log(invoiceReportInfo);
   };
 
   const fileToArrayBytes = (file) => {

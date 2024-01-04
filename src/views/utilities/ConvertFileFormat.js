@@ -51,37 +51,40 @@ const ConvertFileFormat = () => {
   };
 
   const handleUpload = async () => {
-    console.log(pullFile);
-    console.log(pushFile);
-    console.log(DCBFile);
+    console.log('Uploading files:', values);
 
     try {
-      const response = await axios.post('https://localhost:7071/api/MergeExcel/merge', values, {
+      const response = await axios.post('https://localhost:44352/api/MergeExcel/merge', values, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
 
+      console.log('Response:', response);
+
       if (response.status === 200) {
         const result = response.data;
         setMergedFile(result);
       } else {
-        console.error('File upload failed');
+        console.error('File upload failed. Status:', response.status);
       }
     } catch (error) {
-      console.error('Error uploading files:', error);
+      console.error('Error uploading files:', error.message);
+      console.error('Error details:', error.response); // Log the response for more information
     }
   };
 
   const downloadMergedFile = async () => {
-    console.log(mergedFile);
-
     try {
+      const base64String = mergedFile.result.mergedFileBytes;
+
+      // Decode base64 string
       const byteArray = new Uint8Array(
-        atob(mergedFile.mergedFileBytes)
+        atob(base64String)
           .split('')
           .map((char) => char.charCodeAt(0))
       );
+
       const blob = new Blob([byteArray], { type: 'application/octet-stream' });
       const url = window.URL.createObjectURL(blob);
 
