@@ -132,6 +132,7 @@ const Form = () => {
     setReportFileError("");
     setFileName("");
     setReportFile(file);
+    console.log('gggg', file)
   };
 
   const handleImiFileUpload = (file) => {
@@ -205,38 +206,20 @@ const Form = () => {
   };
 
   const fileToArrayBytes = async (file) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (!file) {
         resolve(null);
       } else {
-        const chunkSize = 1024 * 1024; 
-        const fileSize = file.size;
-        let offset = 0;
         const reader = new FileReader();
-        const arrayBuffer = new Uint8Array(fileSize);
   
-        reader.onload = (event) => {
-          const bytesRead = new Uint8Array(event.target.result);
-          arrayBuffer.set(bytesRead, offset);
-          offset += bytesRead.length;
-  
-          if (offset < fileSize) {
-            readSlice();
-          } else {
-            resolve(arrayBuffer);
-          }
+        reader.onload = () => {
+          const base64String = btoa(
+            String.fromCharCode.apply(null, new Uint8Array(reader.result))
+          );
+          resolve(base64String);
         };
   
-        reader.onerror = (error) => {
-          reject(error);
-        };
-  
-        const readSlice = () => {
-          const slice = file.slice(offset, offset + chunkSize);
-          reader.readAsArrayBuffer(slice);
-        };
-  
-        readSlice();
+        reader.readAsArrayBuffer(file);
       }
     });
   };  
