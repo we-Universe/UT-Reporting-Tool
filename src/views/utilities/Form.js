@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Grid, Typography, Button, Checkbox, Box } from '@mui/material';
+import { Grid, Typography, Button, Checkbox, Box, Alert } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import DropdownList from 'ui-component/extended/DropdownList';
@@ -15,6 +15,7 @@ import MWFile from 'assets/images/icons/media-world.png';
 import SubCard from 'ui-component/cards/SubCard';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import StatusImage from 'assets/images/icons/filedownload.gif';
 
 const FormSection = ({ title, children }) => (
   <Grid item xs={12} md={6}>
@@ -67,7 +68,7 @@ const Form = () => {
   useEffect(() => {
     fetchReports();
     fetchReportTypes();
-  }, []);
+  }, []);  
 
   let rowData;
 
@@ -106,26 +107,18 @@ const Form = () => {
   const [differenciesFlag, setDifferenciesFlag] = useState(false);
   const [mwFlag, setMwFlag] = useState(false);
   let year = '', month = '';
-  const [reportFileName, setReportFileName] = useState("");
+  const [fileName, setFileName] = useState("");
   const [imiFileName, setImiFileName] = useState("");
   const [diffrenciesFileName, setDiffrenciesFileName] = useState("");
   const [refundFileName, setRefundFileName] = useState("");
   const [mwFileName, setMwFileName] = useState("");
   const [notes, setNotes] = useState([]);
+  const [showAlert, setShowAlert] = useState(false);
+  const [showAddAlert, setShowAddAlert] = useState(false);
 
   const handleNoteChange = (newNotes) => {
     setNotes(newNotes);
   };
-
-  useEffect(() => {
-    if (id !== ":id") {
-      setReportFileName(`ReportFile_${rowData.telecomName}_${rowData.type}_${rowData.Month}_${rowData.Year}.xlsx`);
-      setImiFileName(`ImiFile_${rowData.telecomName}_${rowData.type}_${rowData.Month}_${rowData.Year}.xlsx`);
-      setDiffrenciesFileName(`DiffrenciesFile_${rowData.telecomName}_${rowData.type}_${rowData.Month}_${rowData.Year}.xlsx`);
-      setRefundFileName(`RefundFile_${rowData.telecomName}_${rowData.type}_${rowData.Month}_${rowData.Year}.xlsx`);
-      setMwFileName(`MwFile_${rowData.telecomName}_${rowData.type}_${rowData.Month}_${rowData.Year}.xlsx`);
-    }
-  }, [id]);
 
   const handleDateChange = (dateInfo) => {
     setSelectedDateState(dateInfo);
@@ -137,8 +130,9 @@ const Form = () => {
 
   const handleFileUpload = (file) => {
     setReportFileError("");
-    setReportFileName("");
+    setFileName("");
     setReportFile(file);
+    console.log('gggg', file)
   };
 
   const handleImiFileUpload = (file) => {
@@ -181,6 +175,13 @@ const Form = () => {
       if (rowData.approved >= 6) {
         setApproved(true);
       }
+      if (id != ":id") {
+        setImiFileName(`ImiFile_${rowData.telecomName}_${rowData.type}_${rowData.Month}_${rowData.Year}.xlsx`);
+        setDiffrenciesFileName(`DiffrenciesFile_${rowData.telecomName}_${rowData.type}_${rowData.Month}_${rowData.Year}.xlsx`);
+        setRefundFileName(`RefundFile_${rowData.telecomName}_${rowData.type}_${rowData.Month}_${rowData.Year}.xlsx`);
+        setMwFileName(`MwFile_${rowData.telecomName}_${rowData.type}_${rowData.Month}_${rowData.Year}.xlsx`);
+        setFileName(`ReportFile_${rowData.telecomName}_${rowData.type}_${rowData.Month}_${rowData.Year}.xlsx`);
+      }
     }
   }, [rowData]);
 
@@ -204,29 +205,24 @@ const Form = () => {
     }
   };
 
-  const fileToArrayBytes = (file) => {
+  const fileToArrayBytes = async (file) => {
     return new Promise((resolve) => {
       if (!file) {
         resolve(null);
       } else {
-        if (file instanceof Blob || file instanceof File) {
-          const reader = new FileReader();
-          reader.onload = () => {
-            const base64String = btoa(
-              String.fromCharCode.apply(null, new Uint8Array(reader.result))
-            );
-            resolve(base64String);
-          };
-          reader.readAsArrayBuffer(file);
-        } else if (typeof file === 'string') {
-          resolve(file);
-        } else {
-          console.error('Error: The provided file is not a valid Blob, File, or base64 string.');
-          resolve(null);
-        }
+        const reader = new FileReader();
+  
+        reader.onload = () => {
+          const base64String = btoa(
+            String.fromCharCode.apply(null, new Uint8Array(reader.result))
+          );
+          resolve(base64String);
+        };
+  
+        reader.readAsArrayBuffer(file);
       }
     });
-  };
+  };  
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -302,6 +298,10 @@ const Form = () => {
           setMwFlag(false);
           setDifferenciesFlag(false);
         }, 200);
+        setShowAddAlert(true);
+        setTimeout(() => {
+          setShowAddAlert(false);
+        }, 2000);
       }
       else {
         try {
@@ -332,11 +332,26 @@ const Form = () => {
             "Notes": newNotes
           });
           console.log('API Response:', response.data);
+          setShowAlert(true);
+          setTimeout(() => {
+            setShowAlert(false);
+          }, 2000);
         } catch (error) {
           console.error('Error submitting report:', error);
         }
       }
     }
+  };
+
+  const handleDownload = (reportFile) => {
+    const blob = new Blob([reportFile], { type: 'application/octet-stream' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'file.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   return (
@@ -385,14 +400,19 @@ const Form = () => {
                       {reportFileError}
                     </Box>
                   )}
-                  <Box sx={{ width: "fit-content" }}>
+                  <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                     <FileUpload
                       image={UploadFile}
                       allowedExtensions={['xlsx']}
                       onUpload={handleFileUpload}
                       flag={flag}
-                      reportFileName={reportFileName}
+                      reportFileName={fileName}
                     />
+                    {id !== ":id" && (
+                      <button onClick={() => handleDownload(reportFile)} style={{ border: 'none', padding: 0, margin: 0, background: 'none' }}>
+                        <img src={StatusImage} alt="Download File" style={{ width: 'auto', height: 'auto' }} />
+                      </button>
+                    )}
                   </Box>
                 </Box>
               </FormSection>
@@ -424,7 +444,14 @@ const Form = () => {
 
               {/* IMI File */}
               <FormSection title="IMI File">
-                <FileUpload image={ImiFile} allowedExtensions={['xlsx']} onUpload={handleImiFileUpload} flag={imiFlag} reportFileName={imiFileName} />
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <FileUpload image={ImiFile} allowedExtensions={['xlsx']} onUpload={handleImiFileUpload} flag={imiFlag} reportFileName={imiFileName} />
+                  {id !== ":id" && (
+                    <button onClick={() => handleDownload(imiReportFile)} style={{ border: 'none', padding: 0, margin: 0, background: 'none' }}>
+                      <img src={StatusImage} alt="Download File" style={{ width: 'auto', height: 'auto' }} />
+                    </button>
+                  )}
+                </Box>
               </FormSection>
 
               {/* Date */}
@@ -436,17 +463,38 @@ const Form = () => {
 
               {/* Refund File */}
               <FormSection title="Refund File">
-                <FileUpload image={RefundFile} allowedExtensions={['xlsx']} onUpload={handleRefundFileUpload} flag={refundFlag} reportFileName={refundFileName} />
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <FileUpload image={RefundFile} allowedExtensions={['xlsx']} onUpload={handleRefundFileUpload} flag={refundFlag} reportFileName={refundFileName} />
+                  {id !== ":id" && (
+                    <button onClick={() => handleDownload(refundReportFile)} style={{ border: 'none', padding: 0, margin: 0, background: 'none' }}>
+                      <img src={StatusImage} alt="Download File" style={{ width: 'auto', height: 'auto' }} />
+                    </button>
+                  )}
+                </Box>
               </FormSection>
 
               {/* Differencies File */}
               <FormSection title="Differencies File">
-                <FileUpload image={DifferenciesFile} allowedExtensions={['xlsx']} onUpload={handleDiffrenciesFileUpload} flag={differenciesFlag} reportFileName={diffrenciesFileName} />
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <FileUpload image={DifferenciesFile} allowedExtensions={['xlsx']} onUpload={handleDiffrenciesFileUpload} flag={differenciesFlag} reportFileName={diffrenciesFileName} />
+                  {id !== ":id" && (
+                    <button onClick={() => handleDownload(differenciesReportFile)} style={{ border: 'none', padding: 0, margin: 0, background: 'none' }}>
+                      <img src={StatusImage} alt="Download File" style={{ width: 'auto', height: 'auto' }} />
+                    </button>
+                  )}
+                </Box>
               </FormSection>
 
               {/* MW File */}
               <FormSection title="MW File">
-                <FileUpload image={MWFile} allowedExtensions={['xlsx']} onUpload={handleMwFileUpload} flag={mwFlag} reportFileName={mwFileName} />
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <FileUpload image={MWFile} allowedExtensions={['xlsx']} onUpload={handleMwFileUpload} flag={mwFlag} reportFileName={mwFileName} />
+                  {id !== ":id" && (
+                    <button onClick={() => handleDownload(mwReportFile)} style={{ border: 'none', padding: 0, margin: 0, background: 'none' }}>
+                      <img src={StatusImage} alt="Download File" style={{ width: 'auto', height: 'auto' }} />
+                    </button>
+                  )}
+                </Box>
               </FormSection>
 
               {/* Approved */}
@@ -483,6 +531,16 @@ const Form = () => {
                 </Button>
               </FormSection>
             </Grid>
+            {showAlert && (
+            <Alert severity="success" sx={{ width: '100%', maxWidth: '600px', backgroundColor: "#fff" }}>
+              Data is updated successfully
+            </Alert>
+          )}
+           {showAddAlert && (
+            <Alert severity="success" sx={{ width: '100%', maxWidth: '600px', backgroundColor: "#fff" }}>
+              Data is added successfully
+            </Alert>
+          )}
           </SubCard>
         </Grid>
       </Grid>

@@ -20,6 +20,7 @@ const Revenues = () => {
     const [progress, setProgress] = useState(0);
     const timerRef = useRef(null);
     const [reportFileError, setReportFileError] = useState("");
+    const [flag, setFlag] = useState(false);
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -76,6 +77,7 @@ const Revenues = () => {
                 clearInterval(timerRef.current);
                 setProgress(100);
                 setSuccess(true);
+                setReportFile(null);
                 setTimeout(() => {
                     setSuccess(false);
                 }, 2000);
@@ -84,6 +86,11 @@ const Revenues = () => {
             } finally {
                 clearInterval(timerRef.current);
                 setLoading(false);
+                setFlag(true);
+                setTimeout(() => {
+                    setFlag(false);
+                }, 2000);
+                setProgress(0);
             }
         }
     };
@@ -136,6 +143,7 @@ const Revenues = () => {
                                         allowedExtensions={['xlsx']}
                                         onUpload={handleFileUpload}
                                         reportFileName={reportFileName}
+                                        flag={flag}
                                     />
                                 </Box>
                             </Grid>

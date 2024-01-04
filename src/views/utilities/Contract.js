@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 // material-ui
-import { Box, Card, Grid, Typography, TextField, Button } from '@mui/material';
+import { Box, Card, Grid, Typography, TextField, Button, Alert } from '@mui/material';
 
 // project imports
 import SubCard from 'ui-component/cards/SubCard';
@@ -83,6 +83,7 @@ const UIColor = () => {
   const [reportFileError, setReportFileError] = useState("");
   const [flag, setFlag] = useState(false);
   const [notes, setNotes] = useState([]);
+  const [showAddAlert, setShowAddAlert] = useState(false);
 
   const handleNoteChange = (newNotes) => {
     setNotes(newNotes);
@@ -110,15 +111,15 @@ const UIColor = () => {
   const convertFileToBase64 = async (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-  
+
       reader.onload = () => {
-        resolve(reader.result.split(',')[1]); 
+        resolve(reader.result.split(',')[1]);
       };
-  
+
       reader.onerror = (error) => {
         reject(error);
       };
-  
+
       reader.readAsDataURL(file);
     });
   };
@@ -170,6 +171,10 @@ const UIColor = () => {
         setTimeout(() => {
           setFlag(false);
         }, 200);
+        setShowAddAlert(true);
+        setTimeout(() => {
+          setShowAddAlert(false);
+        }, 2000);
       } catch (error) {
         console.error('Error submitting contract:', error);
       }
@@ -250,7 +255,7 @@ const UIColor = () => {
               </Grid>
               <Grid item xs={12} sm={6} md={4} lg={11}>
                 <FormSection title="Notes*">
-                <Note notes={notes} onChange={handleNoteChange} />
+                  <Note notes={notes} onChange={handleNoteChange} />
                 </FormSection>
               </Grid>
               <Grid item xs={12} sm={6} md={4} lg={12}>
@@ -274,6 +279,11 @@ const UIColor = () => {
                 </FormSection>
               </Grid>
             </Grid>
+            {showAddAlert && (
+              <Alert severity="success" sx={{ width: '100%', maxWidth: '600px', backgroundColor: "#fff" }}>
+                Data is added successfully
+              </Alert>
+            )}
           </SubCard>
         </Grid>
       </Grid>
