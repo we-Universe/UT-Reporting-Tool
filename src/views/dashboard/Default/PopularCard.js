@@ -206,7 +206,7 @@ const PopularCard = () => {
 
   const handleSaveClick = (rowId) => {
     if (editableRows.has(rowId)) {
-      setAlertMessage(`Changes saved successfully for row ${Number(rowId) + 1}`);
+      setAlertMessage(`Changes saved successfully`);
       setShowAlert(true);
       setTimeout(() => {
         setShowAlert(false);
